@@ -1,0 +1,442 @@
+{
+  "environment": "localhost with real Groq and Supabase",
+  "started_at": "2026-10-31T10:40:18.731Z",
+  "checks": [
+    "Backend health and live database readiness passed",
+    "Both vendor records and seeded purchase orders verified",
+    "Human approval persisted with review history and PO accepted balance 60000",
+    "Original PDF downloaded through short-lived private Storage link",
+    "Request-information review persisted for incomplete invoice",
+    "Overbilling review cannot be approved through the UI",
+    "Unauthorized API reads and reviews rejected",
+    "Dashboard matches persisted records; mobile width and browser runtime checks passed",
+    "All 4 executions, 24 stages, reviews, and PO balance survived backend process restart",
+    "Database function rejects unresolved overbilling approval with valid reviewer credentials",
+    "Private Storage denies anonymous public access while signed PDF download succeeds"
+  ],
+  "scenarios": [
+    {
+      "input": "01-valid-partial-invoice.pdf",
+      "execution_id": "4ce36d81-aff8-44a3-b41b-003a7b1233a8",
+      "expected": "ready",
+      "actual": "ready",
+      "status": "completed",
+      "duration_ms": 5306,
+      "error_code": null,
+      "error_message": null,
+      "rules": [
+        {
+          "code": "required_fields",
+          "rule": "Do not infer missing identifiers or amounts.",
+          "title": "Required information",
+          "status": "pass",
+          "detected": "All required fields present",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "invoice_date",
+          "rule": "Date must be ISO YYYY-MM-DD and cannot be in the future.",
+          "title": "Invoice date",
+          "status": "pass",
+          "detected": "2026-10-20",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "source_evidence",
+          "rule": "Every critical field needs a verified source excerpt.",
+          "title": "Source evidence",
+          "status": "pass",
+          "detected": "Critical fields have document excerpts",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "approved_vendor",
+          "rule": "Require one exact normalized vendor match in the approved vendor register.",
+          "title": "Approved vendor",
+          "status": "pass",
+          "detected": "Northstar Office Supplies",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "vendor_tax_id",
+          "rule": "A supplied tax identifier must match the vendor register; this is not government verification.",
+          "title": "Vendor identifier",
+          "status": "pass",
+          "detected": "DEMO-TAX-001",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "purchase_order",
+          "rule": "PO must be open, explicit, and belong to the matched vendor.",
+          "title": "Purchase order match",
+          "status": "pass",
+          "detected": "PO-2026-1001",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "duplicate_invoice",
+          "rule": "An existing non-rejected invoice with the same normalized vendor and number cannot be accepted twice.",
+          "title": "Duplicate invoice",
+          "status": "pass",
+          "detected": "No matching vendor + invoice number",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "invoice_arithmetic",
+          "rule": "Nonnegative subtotal and tax; positive total; rounding difference at most 0.01. Credits are outside this release.",
+          "title": "Invoice arithmetic",
+          "status": "pass",
+          "detected": "Subtotal 60000.00 + tax 0.00 vs total 60000.00",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "line_items",
+          "rule": "Line amounts must sum to the pretax subtotal within 0.01; ambiguous tax-inclusive lines require review.",
+          "title": "Line item reconciliation",
+          "status": "pass",
+          "detected": "1 extracted line items",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "currency",
+          "rule": "Invoice and PO currencies must match. No FX conversion.",
+          "title": "Currency agreement",
+          "status": "pass",
+          "detected": "Invoice INR; PO INR",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "po_remaining_balance",
+          "rule": "Gross invoice total must not exceed the remaining gross PO balance. No overbilling tolerance.",
+          "title": "Remaining PO balance",
+          "status": "pass",
+          "detected": "Invoice 60000.00; remaining 100000.0; overage 0",
+          "next_action": "No action needed."
+        }
+      ]
+    },
+    {
+      "input": "02-missing-invoice-number.pdf",
+      "execution_id": "8eac80ca-59e6-44e9-bb48-dc3f84a5e4db",
+      "expected": "needs_review",
+      "actual": "needs_review",
+      "status": "completed",
+      "duration_ms": 6409,
+      "error_code": null,
+      "error_message": null,
+      "rules": [
+        {
+          "code": "required_fields",
+          "rule": "Do not infer missing identifiers or amounts.",
+          "title": "Required information",
+          "status": "review",
+          "detected": "invoice_number",
+          "next_action": "Request a corrected invoice."
+        },
+        {
+          "code": "invoice_date",
+          "rule": "Date must be ISO YYYY-MM-DD and cannot be in the future.",
+          "title": "Invoice date",
+          "status": "pass",
+          "detected": "2026-10-20",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "source_evidence",
+          "rule": "Every critical field needs a verified source excerpt.",
+          "title": "Source evidence",
+          "status": "pass",
+          "detected": "Critical fields have document excerpts",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "extraction_uncertainty",
+          "rule": "Unresolved extraction uncertainty requires human attention.",
+          "title": "Extraction uncertainty",
+          "status": "review",
+          "detected": "Invoice number is not provided in the document.",
+          "next_action": "Inspect the document and request corrections as needed."
+        },
+        {
+          "code": "approved_vendor",
+          "rule": "Require one exact normalized vendor match in the approved vendor register.",
+          "title": "Approved vendor",
+          "status": "pass",
+          "detected": "Northstar Office Supplies",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "vendor_tax_id",
+          "rule": "A supplied tax identifier must match the vendor register; this is not government verification.",
+          "title": "Vendor identifier",
+          "status": "pass",
+          "detected": "DEMO-TAX-001",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "purchase_order",
+          "rule": "PO must be open, explicit, and belong to the matched vendor.",
+          "title": "Purchase order match",
+          "status": "pass",
+          "detected": "PO-2026-1001",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "duplicate_invoice",
+          "rule": "An existing non-rejected invoice with the same normalized vendor and number cannot be accepted twice.",
+          "title": "Duplicate invoice",
+          "status": "pass",
+          "detected": "No matching vendor + invoice number",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "invoice_arithmetic",
+          "rule": "Nonnegative subtotal and tax; positive total; rounding difference at most 0.01. Credits are outside this release.",
+          "title": "Invoice arithmetic",
+          "status": "pass",
+          "detected": "Subtotal 10000.00 + tax 0.00 vs total 10000.00",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "line_items",
+          "rule": "Line amounts must sum to the pretax subtotal within 0.01; ambiguous tax-inclusive lines require review.",
+          "title": "Line item reconciliation",
+          "status": "pass",
+          "detected": "1 extracted line items",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "currency",
+          "rule": "Invoice and PO currencies must match. No FX conversion.",
+          "title": "Currency agreement",
+          "status": "pass",
+          "detected": "Invoice INR; PO INR",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "po_remaining_balance",
+          "rule": "Gross invoice total must not exceed the remaining gross PO balance. No overbilling tolerance.",
+          "title": "Remaining PO balance",
+          "status": "pass",
+          "detected": "Invoice 10000.00; remaining 40000.0; overage 0",
+          "next_action": "No action needed."
+        }
+      ]
+    },
+    {
+      "input": "03-duplicate-renamed.pdf",
+      "execution_id": "5b74fefc-3b30-47ad-a437-4448afdcc36d",
+      "expected": "blocked",
+      "actual": "blocked",
+      "status": "completed",
+      "duration_ms": 6374,
+      "error_code": null,
+      "error_message": null,
+      "rules": [
+        {
+          "code": "required_fields",
+          "rule": "Do not infer missing identifiers or amounts.",
+          "title": "Required information",
+          "status": "pass",
+          "detected": "All required fields present",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "invoice_date",
+          "rule": "Date must be ISO YYYY-MM-DD and cannot be in the future.",
+          "title": "Invoice date",
+          "status": "pass",
+          "detected": "2026-10-20",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "source_evidence",
+          "rule": "Every critical field needs a verified source excerpt.",
+          "title": "Source evidence",
+          "status": "pass",
+          "detected": "Critical fields have document excerpts",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "approved_vendor",
+          "rule": "Require one exact normalized vendor match in the approved vendor register.",
+          "title": "Approved vendor",
+          "status": "pass",
+          "detected": "Northstar Office Supplies",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "vendor_tax_id",
+          "rule": "A supplied tax identifier must match the vendor register; this is not government verification.",
+          "title": "Vendor identifier",
+          "status": "pass",
+          "detected": "DEMO-TAX-001",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "purchase_order",
+          "rule": "PO must be open, explicit, and belong to the matched vendor.",
+          "title": "Purchase order match",
+          "status": "pass",
+          "detected": "PO-2026-1001",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "duplicate_invoice",
+          "rule": "An existing non-rejected invoice with the same normalized vendor and number cannot be accepted twice.",
+          "title": "Duplicate invoice",
+          "status": "block",
+          "detected": "Previously processed as 4ce36d81-aff8-44a3-b41b-003a7b1233a8",
+          "next_action": "Review the original execution; do not resubmit for payment."
+        },
+        {
+          "code": "invoice_arithmetic",
+          "rule": "Nonnegative subtotal and tax; positive total; rounding difference at most 0.01. Credits are outside this release.",
+          "title": "Invoice arithmetic",
+          "status": "pass",
+          "detected": "Subtotal 60000.00 + tax 0.00 vs total 60000.00",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "line_items",
+          "rule": "Line amounts must sum to the pretax subtotal within 0.01; ambiguous tax-inclusive lines require review.",
+          "title": "Line item reconciliation",
+          "status": "pass",
+          "detected": "1 extracted line items",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "currency",
+          "rule": "Invoice and PO currencies must match. No FX conversion.",
+          "title": "Currency agreement",
+          "status": "pass",
+          "detected": "Invoice INR; PO INR",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "po_remaining_balance",
+          "rule": "Gross invoice total must not exceed the remaining gross PO balance. No overbilling tolerance.",
+          "title": "Remaining PO balance",
+          "status": "review",
+          "detected": "Invoice 60000.00; remaining 40000.0; overage 20000.00",
+          "next_action": "Ask procurement for a corrected invoice or an authorized PO amendment."
+        }
+      ]
+    },
+    {
+      "input": "04-partial-invoice-overage.pdf",
+      "execution_id": "55d18d68-8198-41be-b63c-69669e0c3ec1",
+      "expected": "needs_review",
+      "actual": "needs_review",
+      "status": "completed",
+      "duration_ms": 6062,
+      "error_code": null,
+      "error_message": null,
+      "rules": [
+        {
+          "code": "required_fields",
+          "rule": "Do not infer missing identifiers or amounts.",
+          "title": "Required information",
+          "status": "pass",
+          "detected": "All required fields present",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "invoice_date",
+          "rule": "Date must be ISO YYYY-MM-DD and cannot be in the future.",
+          "title": "Invoice date",
+          "status": "pass",
+          "detected": "2026-10-20",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "source_evidence",
+          "rule": "Every critical field needs a verified source excerpt.",
+          "title": "Source evidence",
+          "status": "pass",
+          "detected": "Critical fields have document excerpts",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "approved_vendor",
+          "rule": "Require one exact normalized vendor match in the approved vendor register.",
+          "title": "Approved vendor",
+          "status": "pass",
+          "detected": "Northstar Office Supplies",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "vendor_tax_id",
+          "rule": "A supplied tax identifier must match the vendor register; this is not government verification.",
+          "title": "Vendor identifier",
+          "status": "pass",
+          "detected": "DEMO-TAX-001",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "purchase_order",
+          "rule": "PO must be open, explicit, and belong to the matched vendor.",
+          "title": "Purchase order match",
+          "status": "pass",
+          "detected": "PO-2026-1001",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "duplicate_invoice",
+          "rule": "An existing non-rejected invoice with the same normalized vendor and number cannot be accepted twice.",
+          "title": "Duplicate invoice",
+          "status": "pass",
+          "detected": "No matching vendor + invoice number",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "invoice_arithmetic",
+          "rule": "Nonnegative subtotal and tax; positive total; rounding difference at most 0.01. Credits are outside this release.",
+          "title": "Invoice arithmetic",
+          "status": "pass",
+          "detected": "Subtotal 45000.00 + tax 0.00 vs total 45000.00",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "line_items",
+          "rule": "Line amounts must sum to the pretax subtotal within 0.01; ambiguous tax-inclusive lines require review.",
+          "title": "Line item reconciliation",
+          "status": "pass",
+          "detected": "1 extracted line items",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "currency",
+          "rule": "Invoice and PO currencies must match. No FX conversion.",
+          "title": "Currency agreement",
+          "status": "pass",
+          "detected": "Invoice INR; PO INR",
+          "next_action": "No action needed."
+        },
+        {
+          "code": "po_remaining_balance",
+          "rule": "Gross invoice total must not exceed the remaining gross PO balance. No overbilling tolerance.",
+          "title": "Remaining PO balance",
+          "status": "review",
+          "detected": "Invoice 45000.00; remaining 40000.0; overage 5000.00",
+          "next_action": "Ask procurement for a corrected invoice or an authorized PO amendment."
+        }
+      ]
+    }
+  ],
+  "metrics": {
+    "ready": 1,
+    "total": 4,
+    "failed": 0,
+    "blocked": 1,
+    "running": 0,
+    "approved": 1,
+    "completed": 4,
+    "needs_review": 2,
+    "pending_reviews": 3,
+    "average_duration_ms": 6038
+  },
+  "finished_at": "2026-10-31T17:07:35.372Z",
+  "result": "PASSED",
+  "persistence_restart_verified": true
+}
