@@ -56,8 +56,18 @@ def invoice(filename: str, number: str | None, amount: int, description: str):
     return path
 
 
-first = invoice("01-valid-partial-invoice.pdf", "NS-2026-001", 60000, "Office workstation supplies - first delivery")
-invoice("02-missing-invoice-number.pdf", None, 10000, "Office consumables")
-copyfile(first, OUTPUT / "03-duplicate-renamed.pdf")
-invoice("04-partial-invoice-overage.pdf", "NS-2026-002", 45000, "Office workstation supplies - second delivery")
-print("Created four synthetic invoice fixtures in sample_data/.")
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--approval-only", action="store_true", help="Create only the fresh public approval demo sample.")
+    args = parser.parse_args()
+    if args.approval_only:
+        invoice("05-live-approval-invoice.pdf", "NS-2026-LIVE-003", 10000, "Office consumables - additional delivery")
+        print("Created sample_data/05-live-approval-invoice.pdf (INR 10,000).")
+    else:
+        first = invoice("01-valid-partial-invoice.pdf", "NS-2026-001", 60000, "Office workstation supplies - first delivery")
+        invoice("02-missing-invoice-number.pdf", None, 10000, "Office consumables")
+        copyfile(first, OUTPUT / "03-duplicate-renamed.pdf")
+        invoice("04-partial-invoice-overage.pdf", "NS-2026-002", 45000, "Office workstation supplies - second delivery")
+        print("Created four synthetic invoice fixtures in sample_data/.")

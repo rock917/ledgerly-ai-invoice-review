@@ -16,3 +16,9 @@ The happy path is not counted as an edge case. The other three are designed busi
 The database seed is non-destructive and does not reset accepted balances. Rehearsals need a new set of uniquely numbered invoices and fresh POs, or an explicitly authorized reset of the dedicated demo dataset. Do not reset someone else's project.
 
 Additional reliability cases: corrupt or oversized PDF; scan with no text; malformed AI output; timeout; 429 quota; database outage; unauthorized upload/review; concurrent approvals. Mocked Python tests cover several failure boundaries. Actual PostgreSQL concurrency and public deployment remain to be tested.
+
+## Public approval rehearsal
+
+`05-live-approval-invoice.pdf` uses the fresh invoice number `NS-2026-LIVE-003`, Northstar Office Supplies, PO-2026-1001, and INR 10,000. Generate it with `python backend/scripts/generate_samples.py --approval-only`.
+
+Precondition: this invoice number has not been processed and the PO has at least INR 10,000 remaining. With the earlier approved INR 60,000 invoice, expect `ready`, then human approval changes the accepted balance to INR 70,000 and remaining balance to INR 30,000. Approval is a demo database operation; it does not initiate payment. This public approval result is pending verification. Reuploading the same invoice is expected to be blocked as a duplicate.
