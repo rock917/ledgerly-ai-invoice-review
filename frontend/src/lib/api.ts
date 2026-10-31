@@ -11,7 +11,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     const timeout = AbortSignal.timeout(70000)
     response = await fetch(`${API_URL}${path}`, { ...options, headers: { ...headers, ...options.headers }, signal: options.signal ? AbortSignal.any([options.signal, timeout]) : timeout })
   } catch {
-    throw new Error('The API could not be reached. Render Free may need about a minute to wake up; try again shortly.')
+    throw new Error('Unable to connect to the service. Please try again shortly. If this continues, contact the demo owner.')
   }
   const data = await response.json().catch(() => null)
   if (!response.ok) {
