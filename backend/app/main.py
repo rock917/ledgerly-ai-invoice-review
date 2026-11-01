@@ -98,13 +98,15 @@ async def dashboard():
 
 
 @app.get("/api/executions", dependencies=[Depends(authorize)])
-async def executions(q: str = Query("", max_length=100), outcome: str = "", status: str = "", review: bool = False, offset: int = Query(0, ge=0)):
+async def executions(q: str = Query("", max_length=100), outcome: str = "", status: str = "", review: bool = False, review_status: str = "", offset: int = Query(0, ge=0)):
     await app.state.repo.recover_stale()
     params = {"select": "id,filename,status,outcome,review_status,vendor_name,invoice_number,total,currency,created_at,duration_ms", "order": "created_at.desc", "limit": "25", "offset": str(offset)}
     if outcome in ["ready", "needs_review", "blocked"]:
         params["outcome"] = f"eq.{outcome}"
     if status in ["running", "completed", "failed", "interrupted"]:
         params["status"] = f"eq.{status}"
+    if review_status in ["approved", "rejected", "pending", "information_requested"]:
+        params["review_status"] = f"eq.{review_status}"
     if review:
         params["status"] = "eq.completed"
         params["review_status"] = "in.(pending,information_requested)"
@@ -156,7 +158,7 @@ async def submit(file: UploadFile = File(...)):
         await repo.create({"id": execution_id, "filename": PurePath(file.filename).name[:180], "file_hash": digest, "storage_path": path})
         await repo.stage(execution_id, 0, "Receive invoice", "running")
         await repo.stage(execution_id, 0, "Receive invoice", "completed", f"PDF validated and saved privately; {len(pages)} page(s).")
-        task = asyncio.create_task(run_invoice(execution_id, pages, repo, app.state.extractor, settings.groq_model))
+        task = asyncio.create_task(run_invoice(execution_id, pages, repo, app.state.extractor, settings.groq_model, content))
         tasks.add(task)
         task.add_done_callback(tasks.discard)
     return {"id": execution_id, "reused": False}

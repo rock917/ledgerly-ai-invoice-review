@@ -1,19 +1,22 @@
-import { ArrowDownToLine, ArrowRight, ArrowUpRight, CheckCheck, Clock3, FileText, ShieldAlert } from 'lucide-react'
+import { CheckCheck, Clock3, FileText, ShieldAlert, Upload } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useResource } from '../lib/api'
 import type { DashboardData } from '../types'
 import { Button } from '../components/ui/button'
-import { ErrorBanner, RunsTable } from '../components/shared'
+import { ErrorBanner } from '../components/shared'
+import { InvoiceInbox } from '../components/InvoiceInbox'
 
 export function Dashboard({ connected }: { connected: boolean }) {
   const { data, error, loading, refresh } = useResource<DashboardData>('/api/dashboard', connected, 15000)
-  const metrics = data?.metrics
-  const cards = [{ key: 'total', title: 'Invoices processed', detail: 'All workflow executions', icon: FileText }, { key: 'completed', title: 'Completed workflows', detail: 'Including business exceptions', icon: CheckCheck }, { key: 'pending_reviews', title: 'Awaiting review', detail: 'Human decision required', icon: Clock3 }, { key: 'failed', title: 'Technical failures', detail: 'Failed or interrupted runs', icon: ShieldAlert }]
-  return <><div className="page-heading"><div><div className="eyebrow">YOUR AP CONTROL ROOM</div><h1>A clearer view of every invoice.</h1><p>From incoming documents to decisions you can explain.</p></div><Button asChild><Link to="/new"><ArrowDownToLine size={17}/>Process invoice</Link></Button></div>
+  const cards = [
+    { key: 'total', title: 'Invoices processed', detail: 'All saved workflows', icon: FileText },
+    { key: 'pending_reviews', title: 'Pending reviews', detail: 'Awaiting a final decision', icon: Clock3 },
+    { key: 'approved', title: 'Approved', detail: 'Accepted by a reviewer', icon: CheckCheck },
+    { key: 'failed', title: 'Technical failures', detail: 'Failed or interrupted runs', icon: ShieldAlert },
+  ]
+  return <><div className="page-heading"><div><div className="eyebrow">ACCOUNTS PAYABLE</div><h1>Your invoice workspace.</h1><p>Every invoice, every check, every decision. In one place.</p></div><Button asChild><Link to="/new"><Upload size={17}/>Upload invoice</Link></Button></div>
     {error && <ErrorBanner message={error} retry={refresh}/>}
-    <div className="metric-grid">{cards.map(({ key, title, detail, icon: Icon }) => <section className="metric-card" key={key}><div className="metric-top"><span>{title}</span><Icon size={17}/></div><div className="metric-value">{metrics ? metrics[key] : '—'}</div><small>{loading ? 'Loading records…' : detail}</small></section>)}</div>
-    <div className="overview-grid"><section className="panel recent-panel"><div className="panel-heading"><div><h2>Recent activity</h2><p>Every run, from receipt to resolution.</p></div><Link to="/history" className="text-link">View all <ArrowRight size={14}/></Link></div>{data ? <RunsTable runs={data.recent}/> : <div className="data-placeholder"><FileText size={30}/><h3>{connected ? 'Loading invoice activity' : 'Ready for your first real run'}</h3><p>{connected ? 'Records will appear once the API responds.' : 'Connect your workspace, then upload an invoice. All metrics come from saved executions.'}</p></div>}</section>
-    <section className="panel outcomes-panel"><div className="panel-heading"><div><h2>Decision breakdown</h2><p>Outcomes from completed runs</p></div></div><div className="outcome-total"><strong>{metrics ? metrics.completed : '—'}</strong><span>completed workflows</span></div><div className="distribution" aria-label="Decision distribution">{metrics?.completed ? ['ready', 'needs_review', 'blocked'].map(k => <span key={k} className={`segment-${k}`} style={{ flex: metrics[k] }}/>) : <span className="segment-empty"/>}</div><div className="outcome-legend">{[['ready', 'Ready for approval'], ['needs_review', 'Needs attention'], ['blocked', 'Blocked']].map(([k, label]) => <div key={k}><span><i className={`legend-${k}`}/>{label}</span><strong>{metrics ? metrics[k] : '—'}</strong></div>)}</div><div className="outcome-note"><ShieldAlert size={17}/><span>Business exceptions stay visible.<br/>They are not technical failures.</span></div></section></div>
-    <section className="workflow-strip"><div><div className="eyebrow">BUILT FOR THE EXCEPTIONS</div><h2>A clear path from PDF to decision.</h2><p>Evidence at every step. Your team stays in control.</p></div><div className="mini-flow">{['Receive', 'Extract', 'Validate', 'Decide'].map((s, i) => <div key={s}><span>{String(i + 1).padStart(2, '0')}</span><strong>{s}</strong>{i < 3 && <ArrowRight size={15}/>}</div>)}</div><Link to="/new" aria-label="Start a new invoice" className="flow-link"><ArrowUpRight size={21}/></Link></section>
+    <div className="metric-grid">{cards.map(({key, title, detail, icon: Icon}) => <section className={`metric-card metric-${key}`} key={key}><span className="metric-icon"><Icon size={20}/></span><div><span className="metric-title">{title}</span><strong className="metric-value">{data?.metrics[key] ?? '—'}</strong><small>{loading ? 'Loading…' : detail}</small></div></section>)}</div>
+    <InvoiceInbox connected={connected}/>
   </>
 }

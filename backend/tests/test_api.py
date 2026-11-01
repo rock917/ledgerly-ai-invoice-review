@@ -69,3 +69,18 @@ def test_dashboard_uses_actual_repository_response(monkeypatch):
         result = client.get("/api/dashboard", headers={"Authorization": "Bearer demo-test"})
     assert result.status_code == 200
     assert result.json()["metrics"] == {"total": 7, "pending_reviews": 3}
+
+
+def test_review_filters_and_pending_queue_are_distinct(monkeypatch):
+    configure(monkeypatch)
+    with TestClient(app) as client:
+        repo = AsyncMock()
+        repo.rows.return_value = []
+        app.state.repo = repo
+        for value in ['approved', 'rejected']:
+            client.get('/api/executions', params={'review_status': value}, headers={'Authorization': 'Bearer demo-test'})
+            assert repo.rows.call_args.args[1]['review_status'] == f'eq.{value}'
+        client.get('/api/executions?review=true&review_status=approved', headers={'Authorization': 'Bearer demo-test'})
+        assert repo.rows.call_args.args[1]['review_status'] == 'in.(pending,information_requested)'
+        client.get('/api/executions?review_status=eq.anything', headers={'Authorization': 'Bearer demo-test'})
+        assert 'review_status' not in repo.rows.call_args.args[1]

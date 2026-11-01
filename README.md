@@ -2,7 +2,9 @@
 
 PS-1 for the Zamp AI Solutions Analyst case study. Upload an invoice PDF, extract structured fields with Groq, compare against procurement records, and produce an evidence-backed AP decision. People approve; the application never initiates payments.
 
-**Current state:** local browser-to-FastAPI-to-Groq-to-Supabase workflow verified. All four business scenarios passed, along with human approval, private file access, database enforcement, and persistence after restarting the API. Backend regression: 49 passed. An Azure Web App has been provisioned; public backend deployment and frontend deployment are not yet verified. See [milestones](docs/PROGRESS.md) and [live test results](docs/live-test-results.json).
+**Live demo:** [Ledgerly](https://ledgerly-ai-invoice-review.vercel.app/) · [API documentation](https://ledgerly-api-bobby-h3e4dnf4g3hsh9ej.centralindia-01.azurewebsites.net/docs) · [Source](https://github.com/rock917/ledgerly-ai-invoice-review)
+
+**Current state:** the deployed text-PDF workflow has been exercised through Vercel and Azure, including human approval and the PO balance update. The new minimal layout, Light/Dark/System themes, clearer review controls, and local OCR are implemented and tested locally; the updated Azure backend and a real scanned-invoice run are now verified; the matching frontend release is in progress. Backend regression: 59 passed. See [progress](docs/PROGRESS.md), [OCR verification](docs/OCR.md), and the [ERPNext setup plan](docs/ERP_NEXT_PLAN.md).
 
 ## Reviewer walkthrough
 
@@ -19,7 +21,7 @@ React + Vite + TypeScript + Tailwind + owned shadcn-style Button component -> Fa
 ```mermaid
 flowchart LR
   A[React on Vercel] -->|REST and polling| B[FastAPI on Azure App Service]
-  B --> C[PDF text extraction]
+  B --> C[Native PDF text or bounded local OCR]
   C --> D[Groq structured extraction]
   D --> E[Deterministic policy rules]
   E --> F[(Supabase PostgreSQL)]
@@ -28,7 +30,7 @@ flowchart LR
   H --> B
 ```
 
-Features implemented: real stage events, decision evidence, duplicate checks, remaining-PO validation, dashboard/history/search, private document links, review records, and atomic approval function. Core flows were exercised through a local Chrome browser with real cloud providers. This is not completed public-production validation.
+Features implemented: stage events, source evidence, duplicate checks, remaining-PO validation, dashboard/history/search, private document links, review records, atomic approval, an invoice summary panel, Light/Dark/System themes, and local OCR for printed scans. Public text-PDF checks and local OCR checks are recorded separately; the public Azure OCR run completed in 35.7 seconds with all 11 checks passing; frontend release verification is in progress.
 
 ## Windows setup
 
@@ -106,7 +108,7 @@ npm.cmd run build --prefix frontend
 .\.venv\Scripts\python.exe backend\scripts\generate_samples.py
 ```
 
-See `sample_data/SCENARIOS.md` for the ordered happy path and three edge cases. Unit tests mock external services; they do not establish live provider or SQL correctness. Public end-to-end validation and concurrent approval testing are separate gates.
+See `sample_data/SCENARIOS.md` for the ordered happy path and three edge cases. Unit tests mock external services; they do not establish live provider or SQL correctness. Concurrent approval testing and load testing remain separate gates. Run `python backend/scripts/check_ocr.py --live` with the project virtual environment to test real OCR, Groq, and Supabase reads without writing records.
 
 ## API
 
@@ -129,22 +131,22 @@ Business outcomes: ready, needs_review, blocked. Execution statuses: running, co
 ## Deployment with zero out-of-pocket spending
 
 1. Existing Azure student credits are authorized for backend hosting. Follow [Azure deployment](docs/AZURE_DEPLOYMENT.md) to verify credit coverage and the spending limit before provisioning. No pay-as-you-go upgrade.
-2. Package the backend with `python scripts/package_backend.py` using the project virtual environment. Proposed host: Linux App Service Basic B1, Always On, one instance and one worker. Set credentials privately in Azure; never include `.env` in a deployment ZIP.
-3. Push this repository to GitHub (repository creation and URL pending). On Vercel, use root `frontend`, framework Vite, build `npm run build`, output `dist`. Set `VITE_API_URL` to the verified Azure HTTPS URL. Verify Hobby eligibility for this personal case study.
+2. Package the backend with `python scripts/package_backend.py` using the project virtual environment. Existing host: Linux App Service Basic B1, Always On, one instance and one worker. Set credentials privately in Azure; never include `.env` in a deployment ZIP.
+3. The repository is connected to GitHub and Vercel. Release the new frontend only after updating the Azure backend, since review filters and OCR require the new backend. On Vercel, use root `frontend`, framework Vite, build `npm run build`, output `dist`. Set `VITE_API_URL` to the verified Azure HTTPS URL. Verify Hobby eligibility for this personal case study.
 4. Set Azure `CORS_ORIGINS` to the exact Vercel origin (no trailing slash); restart as needed when no workflows are active.
 5. Test upload, real AI extraction, review, PO balance, history after backend restart, and private PDF access **through the public frontend**. Verify all sample scenarios; do not equate a passing localhost build with deployment success.
 6. Check readiness before recording/interviewing. Supabase may pause inactive free projects; check before the interview. Stay within free quotas and monitor Azure credit consumption. The retained `render.yaml` is a free-tier fallback, not the selected host.
 
-No public frontend/backend/Swagger/repository URL is claimed until actually created and tested.
+The links above are the deployed initial version. Follow the backend-first update steps in [Azure deployment](docs/AZURE_DEPLOYMENT.md) for the new OCR and theme release.
 
 ## Limitations and next gates
 
-- Text PDF extraction only; scans route to review, with no OCR success claim.
+- OCR covers clear printed English scans; poor scans, handwriting and complex layouts are not guaranteed. Uncertain text requires review. OCR model scores are heuristics, not calibrated confidence. One Azure scan completed in 35.7 seconds; B1 memory and multi-page load behavior still need measurement.
 - No ERP, goods receipt, payment execution, legal tax validation, or verified vendor-registration lookup.
 - No calibrated confidence scores; evidence and unresolved checks determine review.
 - Shared demo/reviewer access is not multi-user identity verification. Use synthetic data only.
 - In-process jobs are not durable; stale runs are marked interrupted after ten minutes. No automatic background retry, queue, or exactly-once execution guarantee.
 - Source-quote existence does not prove that extracted values were interpreted correctly. Human approval remains required.
-- Public deployment, simultaneous approval races, load behaviour, and deployment-specific access controls must still be verified. Quota failure handling was tested with a mock provider response; no intentional exhaustion of the shared free quota was attempted.
+- Simultaneous approval races, load behaviour, and deployment-specific access controls require further verification. Quota failure handling was tested with a mock provider response; no intentional exhaustion of the shared free quota was attempted.
 
-See `docs/DECISIONS.md` for business rules, assumptions, recovery, and illustrative ROI. Future improvements after the deadline: bounded OCR, authenticated reviewer identities, durable job processing, and procurement system integration.
+See `docs/DECISIONS.md` for business rules, assumptions, recovery, and illustrative ROI. Next improvements: authenticated reviewer identities, durable job processing, and procurement integration after an ERPNext test instance exists. No ERP connection is currently implemented.

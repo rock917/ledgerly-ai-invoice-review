@@ -6,27 +6,32 @@ from app.core.errors import ServiceError
 from app.database import Repository, now
 from app.schemas import Decision, RuleResult
 from app.services.ai import Extractor
+from app.services.ocr import DocumentText, prepare_document
 from app.services.rules import evaluate, identity
 
 log = logging.getLogger("ledgerly.workflow")
 
 
-async def run_invoice(execution_id: str, pages: list[str], repo: Repository, extractor: Extractor, model: str):
+async def run_invoice(execution_id: str, pages: list[str], repo: Repository, extractor: Extractor, model: str, document_data: bytes | None = None):
     started = time.monotonic()
     current = 1
     names = {1: "Extract invoice", 2: "Validate information", 3: "Match purchase order", 4: "Evaluate business rules", 5: "Save decision"}
     try:
         async with asyncio.timeout(180):
             await repo.stage(execution_id, current, names[current], "running")
+            document = await prepare_document(document_data, pages) if document_data is not None else DocumentText(pages, [], [])
+            pages = document.pages
+            source_note = f"OCR used on page(s) {', '.join(map(str, document.ocr_pages))}. Excerpts are OCR transcriptions; compare with the original PDF. " if document.ocr_pages else ""
             if sum(len(p.strip()) for p in pages) < 40:
-                await repo.stage(execution_id, current, names[current], "skipped", "No usable PDF text. OCR is not enabled in this release; no AI call was made.")
-                decision = Decision(outcome="needs_review", summary="A readable invoice is required. Upload a text-based PDF; scanned documents currently require manual review.", po_id=None, rules=[RuleResult(code="readable_document", status="review", title="Document readability", detected="No usable text layer", rule="Never invent fields from an unreadable document.", next_action="Request a text-based PDF or review the original document manually.")])
+                await repo.stage(execution_id, current, names[current], "skipped", source_note + "No usable document text after reading; no AI call was made.")
+                decision = Decision(outcome="needs_review", summary="A readable invoice is required. Upload a clearer scan or a text-based PDF.", po_id=None, rules=[RuleResult(code="readable_document", status="review", title="Document readability", detected="Insufficient readable document text", rule="Never invent fields from an unreadable document.", next_action="Request a clearer PDF or review the original document manually.")])
                 await repo.update(execution_id, {"status": "completed", "outcome": "needs_review", "decision": decision.model_dump(), "finished_at": now(), "duration_ms": int((time.monotonic() - started) * 1000)})
                 return
 
             invoice = await extractor.extract(pages)
+            invoice.uncertainties.extend(document.warnings)
             await repo.update(execution_id, {"extraction": invoice.model_dump(), "ai_model": model, "vendor_name": invoice.vendor_name, "invoice_number": invoice.invoice_number, "total": invoice.total, "currency": (invoice.currency or "").upper() or None, "invoice_identity": identity(invoice.vendor_name) + ":" + identity(invoice.invoice_number) if identity(invoice.vendor_name) and identity(invoice.invoice_number) else None})
-            await repo.stage(execution_id, current, names[current], "completed", "Groq response validated; source excerpts checked against the document.")
+            await repo.stage(execution_id, current, names[current], "completed", source_note + "Groq response validated; source excerpts checked against the extracted text.")
             current = 2
             await repo.stage(execution_id, current, names[current], "running")
             await repo.stage(execution_id, current, names[current], "completed", f"{len(invoice.line_items)} line items; {len(invoice.uncertainties)} extraction warnings. Amounts use decimal arithmetic.")

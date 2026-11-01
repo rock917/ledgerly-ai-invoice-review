@@ -10,8 +10,8 @@ Chosen implementation: React/Vite/Tailwind/shadcn-style owned UI components on V
 
 ## Policy v1.0
 
-- English text PDFs, up to 5 MB / 5 pages / 20,000 extracted characters, one invoice per file.
-- Scanned documents without usable text are explicitly escalated; OCR is not implemented.
+- English text PDFs and clear printed scans, up to 5 MB / 5 pages / 20,000 extracted characters, one invoice per file.
+- Sparse-text pages and pages containing large raster images use bounded offline OCR. Unreadable or low-score OCR text requires review. Source quotes are verified against transcriptions; compare with original pixels before approval. See OCR.md for limits and verified results.
 - Vendor and PO matching use exact alphanumeric normalization. No fuzzy auto-approval.
 - Required fields: vendor, invoice number, date, PO reference, currency, subtotal, tax, total.
 - Dates must be unambiguous ISO dates and not future dates. Missing fields are never invented.
@@ -37,7 +37,7 @@ Supabase service-role access stays on the backend. All app tables enable RLS and
 
 ## Credit-funded and free-tier deployment assumptions
 
-Azure App Service Linux Basic B1 with Always On is the proposed backend, subject to subscription coverage, regional availability, and price verification. Keep one worker/instance and the student subscription spending limit enabled; no pay-as-you-go upgrade. All durable data remains in Supabase. Vercel only hosts static assets. Supabase Free capacity and inactivity pausing must be monitored. Groq quotas are shared at organization level, including the candidate's other projects. Render Free remains a fallback if credit coverage or regional quota is unsuitable. See AZURE_DEPLOYMENT.md.
+Azure App Service Linux Basic B1 with Always On is the deployed backend, funded through authorized student credits. Keep one worker/instance and the student subscription spending limit enabled; no pay-as-you-go upgrade. All durable data remains in Supabase. Vercel only hosts static assets. Supabase Free capacity and inactivity pausing must be monitored. Groq quotas are shared at organization level, including the candidate's other projects. Render Free remains a fallback if credit coverage or regional quota is unsuitable. See AZURE_DEPLOYMENT.md.
 
 ## Value hypothesis (not a measured result)
 

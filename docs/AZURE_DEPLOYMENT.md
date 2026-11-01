@@ -4,14 +4,14 @@ Decision recorded 1 November 2026: existing Azure student credits may be consume
 
 ## Deployment status
 
-Backend source and a ZIP packager are prepared. No Azure resources have been created. Subscription credit coverage, spending-limit state, region quota, and estimated price have not yet been verified. No authenticated Azure CLI or App Service connector is available in this workspace.
+The initial backend is deployed as `ledgerly-api-bobby` in `ledgerly-api-bobby_group`, Central India, Linux B1/Python 3.13. The candidate verified `/health` and the public invoice approval workflow. The new OCR/review-filter backend is deployed. Public health, authenticated database connectivity, approved/pending filters, CORS, and one real scanned-invoice workflow were verified on 2 November (Asia/Calcutta). The matching frontend release is in progress. No authenticated Azure CLI or App Service connector is available in this workspace; deployment uses the candidate's Cloud Shell session.
 
-## Proposed resource configuration
+## Resource configuration
 
-| Setting | Proposed value |
+| Setting | Value |
 |---|---|
 | Subscription | Candidate's verified credit-backed student subscription |
-| Resource group | `rg-ledgerly-demo` |
+| Resource group | `ledgerly-api-bobby_group` |
 | Service | App Service Web App, code deployment |
 | Operating system | Linux |
 | Python | 3.13 if offered; verify available runtime before creating the app |
@@ -57,17 +57,27 @@ Set `SCM_DO_BUILD_DURING_DEPLOYMENT=true` so Azure installs the pinned Python de
 
 Do not paste secrets into chat, commit them, package them, or print app settings in CLI output. Use the portal for setting secret values. Reuse the current Supabase schema and reference data; do not reset the successful tests.
 
-## Deploy after account and resource verification
+## Update the existing app (backend first)
 
-An authenticated Azure CLI, VS Code Azure tooling, or a configured GitHub deployment can deploy the prepared code. For an already-created app, Azure CLI ZIP deployment takes this form (replace names with verified resources):
+1. Run the packager above. When no invoices are processing, open Azure Cloud Shell in Bash and use **Manage files > Upload** to upload `tmp/deploy/ledgerly-backend.zip` from your computer.
+2. Run:
 
-```powershell
-az webapp deploy --resource-group rg-ledgerly-demo --name <verified-app-name> --src-path E:\ZAMP_AI_ANALYST\tmp\deploy\ledgerly-backend.zip --type zip --output none
+```bash
+az webapp deploy --resource-group ledgerly-api-bobby_group --name ledgerly-api-bobby --src-path "$HOME/ledgerly-backend.zip" --type zip --timeout 1200000 --output none
 ```
 
-This command is a template, not a deployment already performed. Linux App Service does not support the Kudu drag-and-drop ZIP UI; use a supported deployment path. A GitHub repository is useful for ongoing delivery but is not a technical prerequisite for ZIP deployment.
+The timeout is 20 minutes, expressed in milliseconds. OCR adds native wheels and bundled models; the first build will download more dependencies. If the CLI times out, inspect the deployment before retrying:
 
-Frontend stays on Vercel Hobby subject to eligibility. Set `VITE_API_URL` to the verified Azure HTTPS origin, rebuild/redeploy React, and set backend CORS to the resulting frontend origin.
+```bash
+az webapp log deployment show --resource-group ledgerly-api-bobby_group --name ledgerly-api-bobby --output table
+curl --max-time 30 -i https://ledgerly-api-bobby-h3e4dnf4g3hsh9ej.centralindia-01.azurewebsites.net/health
+```
+
+3. Require successful deployment logs and health HTTP 200 with `configured: true`. Health alone does not verify OCR. Keep existing app settings/startup command; no new keys or database migration are required.
+4. Release the frontend commit to `main`, which triggers the connected Vercel deployment. Keep root `frontend`, Vite, `npm run build`, output `dist`, and the existing Azure `VITE_API_URL`. Keep `CORS_ORIGINS=https://ledgerly-ai-invoice-review.vercel.app`.
+5. In the public frontend, verify themes, Approved/Pending filters, then upload `sample_data/06-scanned-invoice.pdf`. Confirm the extraction stage explicitly records OCR page 1 and inspect the original PDF against the excerpts. Record elapsed time and check Azure memory; no B1 OCR performance claim has been made yet.
+
+The new frontend must not be published against the old backend: the old API ignores the new approval filters and does not run OCR. The current production text-invoice workflow remains available while this update is prepared.
 
 ## Verification gates
 

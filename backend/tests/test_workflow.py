@@ -2,6 +2,7 @@ from unittest.mock import AsyncMock
 
 from app.core.errors import ServiceError
 from app.workflow import run_invoice
+from app.services.ocr import DocumentText
 
 
 async def test_workflow_persists_decision_and_real_stages(invoice, vendors, pos):
@@ -43,3 +44,24 @@ async def test_database_failure_never_marks_completed(invoice):
     repo.update.side_effect = ServiceError("DB down")
     await run_invoice("failed-db-id", ["a sufficiently long document containing real invoice text"], repo, extractor, "test-model")
     assert not any(c.args[1].get("status") == "completed" for c in repo.update.call_args_list)
+
+
+async def test_ocr_uncertainty_prevents_ready_decision(monkeypatch, invoice, vendors, pos):
+    document = DocumentText(['Readable OCR invoice text with all of the expected fields.'], [1], ['Page 1: OCR contains uncertain text.'])
+    monkeypatch.setattr('app.workflow.prepare_document', AsyncMock(return_value=document))
+    repo, extractor = AsyncMock(), AsyncMock()
+    repo.rows.side_effect = [vendors, pos, []]
+    extractor.extract.return_value = invoice
+    await run_invoice('scan-id', [''], repo, extractor, 'test-model', b'PDF bytes')
+    extractor.extract.assert_awaited_once_with(document.pages)
+    updates = [call.args[1] for call in repo.update.call_args_list]
+    assert any(u.get('outcome') == 'needs_review' for u in updates)
+    assert any('OCR used on page(s) 1' in str(call) for call in repo.stage.call_args_list)
+
+
+async def test_ocr_failure_does_not_call_ai(monkeypatch):
+    monkeypatch.setattr('app.workflow.prepare_document', AsyncMock(side_effect=ServiceError('OCR timed out', 504, 'ocr_timeout')))
+    repo, extractor = AsyncMock(), AsyncMock()
+    await run_invoice('scan-id', [''], repo, extractor, 'test-model', b'PDF bytes')
+    extractor.extract.assert_not_called()
+    assert repo.update.call_args.args[1]['error_code'] == 'ocr_timeout'

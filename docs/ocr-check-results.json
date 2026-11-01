@@ -1,0 +1,55 @@
+{
+  "image_only_ocr": "passed",
+  "mixed_pages": "passed",
+  "blank_scan": "review_required",
+  "single_page_ocr_seconds_local": 5.75,
+  "cloud_checks": "real Groq extraction and Supabase reads passed",
+  "database_writes": 0,
+  "outcome": "ready",
+  "checks": [
+    {
+      "code": "required_fields",
+      "status": "pass"
+    },
+    {
+      "code": "invoice_date",
+      "status": "pass"
+    },
+    {
+      "code": "source_evidence",
+      "status": "pass"
+    },
+    {
+      "code": "approved_vendor",
+      "status": "pass"
+    },
+    {
+      "code": "vendor_tax_id",
+      "status": "pass"
+    },
+    {
+      "code": "purchase_order",
+      "status": "pass"
+    },
+    {
+      "code": "duplicate_invoice",
+      "status": "pass"
+    },
+    {
+      "code": "invoice_arithmetic",
+      "status": "pass"
+    },
+    {
+      "code": "line_items",
+      "status": "pass"
+    },
+    {
+      "code": "currency",
+      "status": "pass"
+    },
+    {
+      "code": "po_remaining_balance",
+      "status": "pass"
+    }
+  ]
+}

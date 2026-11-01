@@ -1,0 +1,44 @@
+{
+  "verified_at_utc": "2026-11-01T18:51:53.806611+00:00",
+  "source": "public Azure API",
+  "execution_id": "f72c2c0a-b057-4416-bda8-d7c17fea9151",
+  "submitted_new_run": true,
+  "status": "completed",
+  "outcome": "ready",
+  "review_status": "pending",
+  "duration_ms": 35687,
+  "stages": [
+    {
+      "name": "Receive invoice",
+      "status": "completed",
+      "detail": "PDF validated and saved privately; 1 page(s)."
+    },
+    {
+      "name": "Extract invoice",
+      "status": "completed",
+      "detail": "OCR used on page(s) 1. Excerpts are OCR transcriptions; compare with the original PDF. Groq response validated; source excerpts checked against the extracted text."
+    },
+    {
+      "name": "Validate information",
+      "status": "completed",
+      "detail": "1 line items; 0 extraction warnings. Amounts use decimal arithmetic."
+    },
+    {
+      "name": "Match purchase order",
+      "status": "completed",
+      "detail": "Loaded approved vendor register, purchase orders, and matching invoice history from Supabase."
+    },
+    {
+      "name": "Evaluate business rules",
+      "status": "completed",
+      "detail": "11 checks evaluated; outcome: ready."
+    },
+    {
+      "name": "Save decision",
+      "status": "completed",
+      "detail": "Decision and rule evidence saved. No payment initiated."
+    }
+  ],
+  "po_balances_unchanged": true,
+  "approval_performed": false
+}

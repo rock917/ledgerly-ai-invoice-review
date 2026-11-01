@@ -1,60 +1,40 @@
-# Milestone tracker
+# Ledgerly progress - 2 November 2026
 
-Updated 1 November 2026. Out-of-pocket budget: INR 0; existing Azure student credits authorized for backend hosting. Selected problem: PS-1. Local application name: Ledgerly.
+## Deployed baseline
 
-Status describes verified progress, not just source files written. Cloud deployment is a separate gate.
+- GitHub: https://github.com/rock917/ledgerly-ai-invoice-review
+- Frontend: https://ledgerly-ai-invoice-review.vercel.app
+- Backend: https://ledgerly-api-bobby-h3e4dnf4g3hsh9ej.centralindia-01.azurewebsites.net
+- User-provided deployment logs show a successful Azure build; public health returned HTTP 200/configured true.
+- User screenshots confirm the public run `289a4956-3580-40a6-98d4-5728b61f3479` (NS-2026-LIVE-003, INR 10,000) completed in 6.1 seconds, was approved, and raised PO-2026-1001 accepted balance to INR 70,000, leaving INR 30,000.
+- Earlier local live tests remain in `live-test-results.json`. Those are historical results, not new production load/concurrency claims.
 
-| Milestone | Status | Evidence / next gate |
-|---|---|---|
-| Problem selection | COMPLETED | Candidate confirmed PS-1 |
-| Requirements analysis | COMPLETED | All 7 guide pages read; official requirements distinguished from preferred stack |
-| Workflow architecture | COMPLETED | Scope, policy, and recovery documented in DECISIONS.md |
-| Database setup | COMPLETED | User applied schema and seed; live table/vendor/PO connectivity verified |
-| Backend foundation | COMPLETED | Health, readiness, auth, upload validation, API routes verified |
-| Core AI workflow | COMPLETED | All four cases executed through React/FastAPI with real Groq and Supabase |
-| Happy-path testing | COMPLETED | Real Groq extraction; 11 passed checks; approval saved; PO balance reduced from 100000 to 40000 |
-| React frontend | COMPLETED | Production build and live desktop/mobile browser checks pass for the initial scope |
-| Dashboard | COMPLETED | 4 completed, 0 failed, 3 pending reviews, 1 approved; UI matches Supabase |
-| Live execution | COMPLETED | Browser reads actual persisted stages and final decision |
-| Edge-case handling | COMPLETED | Missing number, renamed duplicate, cumulative PO overbilling verified live; 49 regression tests pass |
-| Supabase persistence | COMPLETED | All 4 executions, 24 stages, review history and PO balance survive backend restart; private Storage verified |
-| Vercel deployment | NOT STARTED | Free Hobby deployment and eligibility check pending |
-| Azure backend deployment | IN PROGRESS | Replaces Render as primary host; packaging prepared, subscription verification and resource creation pending |
-| End-to-end production testing | NOT STARTED | Local browser-to-cloud-provider tests do not count as public deployment |
-| README | IN PROGRESS | Setup, architecture, policy, endpoints, deployment and limitations written; final links pending |
-| Five-minute demo | NOT STARTED | Four synthetic sample inputs prepared; recording pending |
-| Interview preparation | NOT STARTED | Architecture decisions documented; Q&A rehearsal pending |
+## New implementation: backend live; frontend release in progress
 
-## Verified checks
+| Change | Evidence |
+|---|---|
+| Selected #6 minimal layout | Invoice table, filters, selected-invoice summary; desktop/mobile screenshots inspected |
+| Light / Dark / System themes | Browser checks passed for persistence and OS-theme changes |
+| Human review clarity | Approved/rejected history filters, pending-only queue explanation, final decision banner, explicit minimum note length |
+| Backend filters | Whitelisted review-status filter and pending queue tests pass |
+| Local OCR | Image-only sample and mixed pages read; blank page requires review |
+| Real providers with OCR | Groq extraction and Supabase read checks passed; all 11 business rules passed; no database writes |
+| Regression checks | 59 Python tests pass; TypeScript/Vite build passes |
+| ERPNext | Candidate requested a setup plan; `ERP_NEXT_PLAN.md` prepared; no account or connection created |
 
-- Backend regression: 49 passed. One upstream TestClient/httpx deprecation warning; tests pass.
-- Frontend TypeScript and Vite production build passed.
-- Live Supabase tables, dashboard function, seeded vendor records, and initial PO balances verified.
-- Groq credentials accepted and configured model available.
-- Original PDF retrieval through private Supabase signed URL succeeded.
-- Anonymous public-bucket access denied. Overbilling approval with a valid reviewer code rejected by the database; no review/balance mutation occurred.
-- Live browser suite passed. Actual results are recorded in live-test-results.json. API keys and signed document URLs are excluded.
-- Git initialized; .env files, virtual environment, dependencies, and temporary artifacts are ignored.
+The OCR smoke report is in `ocr-check-results.json`. Single-page OCR took 5.75 seconds locally on Windows, not measured on Azure. UI browser checks use mocked API fixtures; real OCR/provider checks are a separate read-only test. This distinction is intentional.
 
-## Bugs discovered and fixed during real testing
+## Immediate next step
 
-1. Vite environment access through an alias compiled but failed at runtime. Replaced with direct import.meta.env access and verified the browser opened the app.
-2. A Supabase read failed after successful approval. Added one bounded retry for safe reads only; writes and approvals are not blindly retried. Added regression coverage.
-3. Database/application clock offset produced negative stage durations. New stages now use the application clock for both endpoints. Historical negative durations are labeled unavailable; historical timestamps are not rewritten.
-4. A screen-reader-only table header escaped its scroll container on mobile. Positioned the table container and verified no page-level horizontal overflow at 390 px.
+The candidate deployed the backend successfully. Independent API checks passed: health, Supabase connectivity, approval filters and CORS. Public OCR run `f72c2c0a-b057-4416-bda8-d7c17fea9151` completed in 35.687 seconds, ready for review, with all 11 checks passing. It remains unapproved and no PO balance changed. Release and verify the matching frontend next. See `azure-ocr-check-results.json`.
 
-## Current local endpoints
+## Remaining work
 
-- Frontend: http://127.0.0.1:5173/
-- API health: http://127.0.0.1:8001/health
-- Swagger: http://127.0.0.1:8001/docs
+- One scanned run is verified on Azure B1. Measure memory and multi-page/load behavior separately.
+- Keep the same single worker/instance; in-process workflows are not durable.
+- Exercise actual PostgreSQL concurrent approval behavior and deployment load separately.
+- Set up the planned local ERPNext demo, then implement/test a connector against real test records. No simulated sync success.
+- Optional verified reviewer identities/login remain a separate future change.
+- Update the final reviewer walkthrough, record the maximum five-minute video, and rehearse interview explanations.
 
-Port 8000 was already occupied and was not modified. Backend requires the local .env; no credentials are stored in this tracker.
-
-## Remaining verification
-
-Public deployment and simultaneous-approval concurrency testing remain separate milestones. No application payment functionality exists. The initial happy-path invoice is already approved, so re-uploading it now correctly returns a duplicate outcome. Prepare a fresh uniquely numbered invoice/PO set for the recorded happy-path demo; do not reset existing records without an explicit decision.
-
-## Session result
-
-Local implementation and requested live integration checks passed. No keys printed or committed. Azure credit use was authorized on 1 November; no Azure resources have been provisioned. The backend ZIP is prepared with source/dependency files only. Next milestone: verify the student subscription's credit coverage and spending limit, deploy the backend on Azure and frontend on Vercel, then repeat the full workflow through the public URL. GitHub remote setup remains pending.
+No payments are initiated. Existing approved invoices and purchase-order balances were not reset or altered by the new OCR checks.

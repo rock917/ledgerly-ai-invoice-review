@@ -21,4 +21,10 @@ Additional reliability cases: corrupt or oversized PDF; scan with no text; malfo
 
 `05-live-approval-invoice.pdf` uses the fresh invoice number `NS-2026-LIVE-003`, Northstar Office Supplies, PO-2026-1001, and INR 10,000. Generate it with `python backend/scripts/generate_samples.py --approval-only`.
 
-Precondition: this invoice number has not been processed and the PO has at least INR 10,000 remaining. With the earlier approved INR 60,000 invoice, expect `ready`, then human approval changes the accepted balance to INR 70,000 and remaining balance to INR 30,000. Approval is a demo database operation; it does not initiate payment. This public approval result is pending verification. Reuploading the same invoice is expected to be blocked as a duplicate.
+Precondition: this invoice number has not been processed and the PO has at least INR 10,000 remaining. With the earlier approved INR 60,000 invoice, expect `ready`, then human approval changes the accepted balance to INR 70,000 and remaining balance to INR 30,000. Approval is a demo database operation; it does not initiate payment. The candidate verified this public approval on 1 November: accepted INR 70,000; remaining INR 30,000. This invoice is already approved. Reuploading the same invoice is expected to be blocked as a duplicate.
+
+## Scanned invoice rehearsal
+
+`06-scanned-invoice.pdf` contains only an image, with no hidden text layer. Invoice `NS-2026-OCR-004` is for INR 5,000 against PO-2026-1001. It was visually checked and tested locally through actual OCR, Groq extraction and Supabase reference reads; all 11 rules passed. That check made no database writes. The deployed Azure backend processed this sample on 2 November (Asia/Calcutta) in 35.687 seconds and saved it ready for review. It remains unapproved. Re-uploading it now should trigger duplicate detection. This is one measured execution, not a load-test result.
+
+Generate with `python backend/scripts/generate_ocr_sample.py`, then verify with `python backend/scripts/check_ocr.py --live`, using the project virtual environment.
