@@ -6,6 +6,7 @@ from app.main import app, settings
 
 
 def configure(monkeypatch):
+    monkeypatch.setattr(settings, "enable_legacy_demo", True)
     for name, value in [("supabase_url", "https://test.supabase.co"), ("supabase_service_role_key", "test-key"), ("groq_api_key", "test-key"), ("demo_access_token", "demo-test"), ("review_access_token", "review-test")]:
         monkeypatch.setattr(settings, name, value)
 
@@ -64,6 +65,7 @@ def test_dashboard_uses_actual_repository_response(monkeypatch):
     with TestClient(app) as client:
         repo = AsyncMock()
         repo.request.return_value = {"total": 7, "pending_reviews": 3}
+        repo.owner_id = None
         repo.rows.return_value = []
         app.state.repo = repo
         result = client.get("/api/dashboard", headers={"Authorization": "Bearer demo-test"})

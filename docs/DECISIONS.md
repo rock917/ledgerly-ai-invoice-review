@@ -31,7 +31,9 @@ An in-process task is not durable. Graceful shutdown attempts to mark interrupte
 
 ## Access model
 
-Demo access code gates backend reads and uploads. Separate reviewer code gates decisions. The UI keeps the demo code in sessionStorage; the reviewer code stays in component memory and is cleared after submission. No keys are embedded in the frontend build. This is shared demonstration access, not verified per-user identity; reviewer names are self-reported.
+The login release uses Supabase Auth with Google and confirmed email/password sign-in. Every API request validates the session with Auth; the server derives the user UUID and scopes all reads/writes, duplicate checks, dashboards, and atomic approvals to it. Every user receives two private synthetic POs; records from the original demo remain in a separate NULL-owner workspace. Reviewer UUIDs are recorded; a browser-supplied reviewer name cannot override the verified account identity. Signup, reset, and OAuth use PKCE. An optional disabled-by-default legacy-code bridge permits a staged rollout, scoped strictly to NULL-owner records. See AUTH_SETUP.md for required migration and provider configuration; these changes are not yet deployed.
+
+Owners may review invoices in their own synthetic workspace. This is a demonstration of accountable review, not organizational separation of duties. A rolling 24-hour per-account upload cap and global two-job cap limit demo usage within the single API process; neither is a distributed abuse-prevention system.
 
 Supabase service-role access stays on the backend. All app tables enable RLS and deny anon/authenticated access. The service role has explicit permissions. Private document links expire after 120 seconds. App tables use ap_ names to avoid collisions; use a dedicated demo Supabase project where possible. No real confidential invoices on the demo.
 

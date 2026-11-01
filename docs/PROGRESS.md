@@ -34,7 +34,7 @@ The candidate deployed the backend successfully. Independent API checks passed: 
 - Keep the same single worker/instance; in-process workflows are not durable.
 - Exercise actual PostgreSQL concurrent approval behavior and deployment load separately.
 - Set up the planned local ERPNext demo, then implement/test a connector against real test records. No simulated sync success.
-- Optional verified reviewer identities/login remain a separate future change.
+- Login is implemented locally; see the pending rollout below.
 - Update the final reviewer walkthrough, record the maximum five-minute video, and rehearse interview explanations.
 
 No payments are initiated. Existing approved invoices and purchase-order balances were not reset or altered by the new OCR checks.
@@ -42,3 +42,10 @@ No payments are initiated. Existing approved invoices and purchase-order balance
 ## Next user-facing step
 
 Open the deployed app and refresh to see the new theme controls. The OCR sample `NS-2026-OCR-004` is ready for human review; do not re-upload it to demonstrate a fresh success because it now exists in history. Continue with the separately requested ERPNext demo setup plan when ready.
+
+
+## Login release — 2 November 2026, pending live setup
+
+Implemented Google/email signup and login, confirmation/reset flow, logout, private workspace provisioning, verified session ownership, per-account sample POs, and reviewer UUID audit records. Themes and OCR remain supported. All 73 backend tests pass. PGlite tests execute the actual migration and verify idempotency, cross-owner constraints, independent same-invoice approvals, balance protection, and denied anon/authenticated access. Mock browser checks pass; see auth-ui-check-results.json.
+
+The live migration, Google OAuth client/provider, custom SMTP, Vercel public Auth variables, Azure release, and external-user checks remain pending. Existing production still uses the earlier layout/theme/OCR release. Do not release the login frontend before its database/backend dependencies. Existing shared history is preserved and will not appear in a new private account. Follow AUTH_SETUP.md. ERPNext remains a plan only.

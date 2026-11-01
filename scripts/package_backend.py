@@ -1,10 +1,14 @@
 """Build an Azure ZIP from an allowlist; never include local environment files."""
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
+import argparse
 
 root = Path(__file__).resolve().parents[1]
 backend = root / "backend"
-output = root / "tmp" / "deploy" / "ledgerly-backend.zip"
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--auth', action='store_true', help='Name the artifact for the login rollout; apply workspace migration before deploying.')
+args = parser.parse_args()
+output = root / "tmp" / "deploy" / ("ledgerly-backend-auth.zip" if args.auth else "ledgerly-backend.zip")
 files = [backend / "requirements.txt", *sorted((backend / "app").rglob("*.py"))]
 if not (backend / "app" / "main.py").is_file():
     raise SystemExit("Backend entry point missing")

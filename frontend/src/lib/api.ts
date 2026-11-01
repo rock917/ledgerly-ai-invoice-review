@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
+import { accessToken } from './supabase'
 
 export const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8001').replace(/\/$/, '')
-export const accessToken = () => sessionStorage.getItem('ledgerly_access') || ''
 
 export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const headers: Record<string, string> = { Authorization: `Bearer ${accessToken()}` }
+  const headers: Record<string, string> = { Authorization: `Bearer ${await accessToken()}` }
   if (options.body && !(options.body instanceof FormData)) headers['Content-Type'] = 'application/json'
   let response: Response
   try {

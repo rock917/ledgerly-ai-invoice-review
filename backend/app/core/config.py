@@ -2,6 +2,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
 
 
 class Settings(BaseSettings):
@@ -15,12 +16,16 @@ class Settings(BaseSettings):
     groq_model: str = "openai/gpt-oss-20b"
     demo_access_token: str = ""
     review_access_token: str = ""
+    enable_legacy_demo: bool = False
+    max_daily_uploads: int = Field(default=10, ge=1, le=100)
     max_upload_mb: int = 5
     max_pdf_pages: int = 5
 
     @property
     def missing_configuration(self) -> list[str]:
-        names = ["supabase_url", "supabase_service_role_key", "groq_api_key", "demo_access_token", "review_access_token"]
+        names = ["supabase_url", "supabase_service_role_key", "groq_api_key"]
+        if self.enable_legacy_demo:
+            names += ["demo_access_token", "review_access_token"]
         return [name.upper() for name in names if not getattr(self, name).strip()]
 
 

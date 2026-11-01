@@ -80,11 +80,14 @@ class Decision(BaseModel):
 class ReviewRequest(BaseModel):
     action: Literal["approve", "reject", "request_info"]
     comment: str = Field(min_length=5, max_length=2000)
-    reviewer: str = Field(min_length=2, max_length=100)
+    reviewer: str | None = Field(default=None, min_length=2, max_length=100)
 
     @field_validator("comment", "reviewer")
     @classmethod
-    def nonblank(cls, value: str) -> str:
-        if len(value.strip()) < 2:
+    def nonblank(cls, value: str | None, info) -> str | None:
+        if value is None:
+            return None
+        minimum = 5 if info.field_name == "comment" else 2
+        if len(value.strip()) < minimum:
             raise ValueError("Must contain meaningful text")
         return value.strip()

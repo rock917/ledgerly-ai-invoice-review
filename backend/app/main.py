@@ -6,6 +6,7 @@ import re
 import secrets
 from contextlib import asynccontextmanager
 from pathlib import PurePath
+from datetime import datetime, timedelta, timezone
 from uuid import UUID, uuid4
 
 import httpx
@@ -14,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from app.auth import Identity, authenticate
 from app.core.config import get_settings
 from app.core.errors import ServiceError
 from app.database import Repository
@@ -46,6 +48,7 @@ submission_lock = asyncio.Lock()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with httpx.AsyncClient() as client:
+        app.state.http = client
         app.state.repo = Repository(settings, client)
         app.state.extractor = GroqExtractor(settings, client)
         yield
@@ -60,11 +63,22 @@ app.add_middleware(CORSMiddleware, allow_origins=[o.strip() for o in settings.co
 bearer = HTTPBearer(auto_error=False)
 
 
-def authorize(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)):
+async def authorize(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)) -> Identity:
     if settings.missing_configuration:
-        raise ServiceError("Backend setup is incomplete. Configure Supabase, Groq, and demo access before running invoices.", 503, "configuration_required")
-    if not credentials or not secrets.compare_digest(credentials.credentials, settings.demo_access_token):
-        raise ServiceError("Enter the demo access code to use this workspace.", 401, "unauthorized")
+        raise ServiceError("The workspace service is not configured yet.", 503, "configuration_required")
+    return await authenticate(credentials.credentials if credentials else '', settings, app.state.http)
+
+
+def get_repo(user: Identity = Depends(authorize)) -> Repository:
+    return app.state.repo.for_owner(user.user_id) if user.user_id else app.state.repo
+
+
+@app.get('/api/me')
+async def me(user: Identity = Depends(authorize), repo: Repository = Depends(get_repo)):
+    if user.user_id is None:
+        return {'id': None, 'display_name': 'Legacy demo', 'legacy': True}
+    profile = await repo.request('POST', '/rest/v1/rpc/ap_ensure_workspace', json={'p_user_id': user.user_id, 'p_display_name': user.name})
+    return profile | {'legacy': False, 'daily_upload_limit': settings.max_daily_uploads}
 
 
 @app.exception_handler(ServiceError)
@@ -84,22 +98,22 @@ async def health():
 
 
 @app.get("/api/readiness", dependencies=[Depends(authorize)])
-async def readiness():
-    await app.state.repo.rows("vendors", {"select": "id", "limit": "1"})
+async def readiness(repo: Repository = Depends(get_repo)):
+    await repo.rows("vendors", {"select": "id", "limit": "1"})
     return {"database": "connected", "ai": "configured_not_probed"}
 
 
 @app.get("/api/dashboard", dependencies=[Depends(authorize)])
-async def dashboard():
-    await app.state.repo.recover_stale()
-    metrics = await app.state.repo.request("POST", "/rest/v1/rpc/ap_dashboard", json={})
-    recent = await app.state.repo.rows("executions", {"select": "id,filename,status,outcome,review_status,vendor_name,invoice_number,total,currency,created_at,duration_ms", "order": "created_at.desc", "limit": "8"})
+async def dashboard(repo: Repository = Depends(get_repo)):
+    await repo.recover_stale()
+    metrics = await repo.request("POST", "/rest/v1/rpc/ap_dashboard_owned", json={"p_owner_id": repo.owner_id})
+    recent = await repo.rows("executions", {"select": "id,filename,status,outcome,review_status,vendor_name,invoice_number,total,currency,created_at,duration_ms", "order": "created_at.desc", "limit": "8"})
     return {"metrics": metrics, "recent": recent}
 
 
 @app.get("/api/executions", dependencies=[Depends(authorize)])
-async def executions(q: str = Query("", max_length=100), outcome: str = "", status: str = "", review: bool = False, review_status: str = "", offset: int = Query(0, ge=0)):
-    await app.state.repo.recover_stale()
+async def executions(q: str = Query("", max_length=100), outcome: str = "", status: str = "", review: bool = False, review_status: str = "", offset: int = Query(0, ge=0), repo: Repository = Depends(get_repo)):
+    await repo.recover_stale()
     params = {"select": "id,filename,status,outcome,review_status,vendor_name,invoice_number,total,currency,created_at,duration_ms", "order": "created_at.desc", "limit": "25", "offset": str(offset)}
     if outcome in ["ready", "needs_review", "blocked"]:
         params["outcome"] = f"eq.{outcome}"
@@ -114,28 +128,28 @@ async def executions(q: str = Query("", max_length=100), outcome: str = "", stat
         clean = re.sub(r"[^\w\s-]", "", q).strip()
         if clean:
             params["or"] = f"(filename.ilike.*{clean}*,vendor_name.ilike.*{clean}*,invoice_number.ilike.*{clean}*)"
-    return await app.state.repo.rows("executions", params)
+    return await repo.rows("executions", params)
 
 
 @app.get("/api/executions/{execution_id}", dependencies=[Depends(authorize)])
-async def execution(execution_id: UUID):
-    await app.state.repo.recover_stale()
-    return await app.state.repo.detail(str(execution_id))
+async def execution(execution_id: UUID, repo: Repository = Depends(get_repo)):
+    await repo.recover_stale()
+    return await repo.detail(str(execution_id))
 
 
 @app.get("/api/executions/{execution_id}/document", dependencies=[Depends(authorize)])
-async def document(execution_id: UUID):
-    run = await app.state.repo.detail(str(execution_id))
-    return {"url": await app.state.repo.signed_url(run["storage_path"])}
+async def document(execution_id: UUID, repo: Repository = Depends(get_repo)):
+    run = await repo.detail(str(execution_id))
+    return {"url": await repo.signed_url(run["storage_path"])}
 
 
 @app.get("/api/purchase-orders", dependencies=[Depends(authorize)])
-async def purchase_orders():
-    return await app.state.repo.rows("purchase_orders", {"select": "*,vendor:ap_vendors(name)", "order": "reference.asc"})
+async def purchase_orders(repo: Repository = Depends(get_repo)):
+    return await repo.rows("purchase_orders", {"select": "*,vendor:ap_vendors!ap_purchase_orders_vendor_id_fkey(name)", "order": "reference.asc"})
 
 
 @app.post("/api/executions", status_code=202, dependencies=[Depends(authorize)])
-async def submit(file: UploadFile = File(...)):
+async def submit(file: UploadFile = File(...), repo: Repository = Depends(get_repo)):
     if not (file.filename or "").lower().endswith(".pdf"):
         raise ServiceError("Upload a PDF invoice.", 422, "unsupported_file")
     content = await file.read(settings.max_upload_mb * 1024 * 1024 + 1)
@@ -148,12 +162,16 @@ async def submit(file: UploadFile = File(...)):
     async with submission_lock:
         if len(tasks) >= 2:
             raise ServiceError("Two invoices are already processing. Wait for a run to finish.", 429, "capacity_limit")
-        repo = app.state.repo
         existing = await repo.rows("executions", {"file_hash": f"eq.{digest}", "status": "eq.running", "select": "id", "limit": "1"})
         if existing:
             return {"id": existing[0]["id"], "reused": True}
+        if repo.owner_id:
+            cutoff = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+            recent = await repo.rows('executions', {'created_at': f'gte.{cutoff}', 'select': 'id', 'limit': str(settings.max_daily_uploads)})
+            if len(recent) >= settings.max_daily_uploads:
+                raise ServiceError(f'Demo limit reached: {settings.max_daily_uploads} uploads per 24 hours. Please return later.', 429, 'daily_upload_limit')
         execution_id = str(uuid4())
-        path = f"{execution_id}/invoice.pdf"
+        path = f"{repo.owner_id or 'legacy'}/{execution_id}/invoice.pdf"
         await repo.upload(path, content)
         await repo.create({"id": execution_id, "filename": PurePath(file.filename).name[:180], "file_hash": digest, "storage_path": path})
         await repo.stage(execution_id, 0, "Receive invoice", "running")
@@ -165,7 +183,13 @@ async def submit(file: UploadFile = File(...)):
 
 
 @app.post("/api/executions/{execution_id}/reviews", dependencies=[Depends(authorize)])
-async def review_invoice(execution_id: UUID, body: ReviewRequest, x_review_token: str = Header("")):
-    if not secrets.compare_digest(x_review_token, settings.review_access_token):
-        raise ServiceError("A valid reviewer access code is required.", 403, "review_unauthorized")
-    return await app.state.repo.request("POST", "/rest/v1/rpc/ap_review_invoice", json={"p_execution_id": str(execution_id), "p_action": body.action, "p_reviewer": body.reviewer, "p_comment": body.comment})
+async def review_invoice(execution_id: UUID, body: ReviewRequest, x_review_token: str = Header(""), user: Identity = Depends(authorize), repo: Repository = Depends(get_repo)):
+    if user.user_id is None:
+        if not secrets.compare_digest(x_review_token, settings.review_access_token):
+            raise ServiceError("A valid reviewer access code is required.", 403, "review_unauthorized")
+        reviewer = body.reviewer or 'Legacy reviewer'
+    else:
+        reviewer = user.name
+    # Ownership check also hides whether another user's execution exists.
+    await repo.detail(str(execution_id))
+    return await repo.request("POST", "/rest/v1/rpc/ap_review_invoice_owned", json={"p_execution_id": str(execution_id), "p_owner_id": user.user_id, "p_action": body.action, "p_reviewer": reviewer, "p_comment": body.comment})

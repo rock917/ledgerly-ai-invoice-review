@@ -1,0 +1,1 @@
+{"name":"ledgerly-database-checks","private":true,"type":"module","scripts":{"test":"node workspaces.test.mjs"},"devDependencies":{"@electric-sql/pglite":"0.5.14"}}

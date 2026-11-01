@@ -1,5 +1,7 @@
 -- Ledgerly v1. Run in the Supabase SQL Editor. All app objects use the ap_ prefix.
 -- Private data: no anon/authenticated grants or permissive RLS policies.
+-- Fresh installs: schema.sql, seed.sql, then migrations/002_private_workspaces.sql.
+-- Existing installations: apply the migration only; do not rerun this base schema afterward.
 begin;
 create table if not exists public.ap_vendors (
   id uuid primary key default gen_random_uuid(),
