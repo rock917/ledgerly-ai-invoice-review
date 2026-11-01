@@ -32,4 +32,4 @@ Verified locally: image-only scan, mixed native/scanned pages, blank page routin
 
 Deploy the rebuilt backend ZIP first; its requirements install the OCR libraries and bundled models. Retain the current startup command, credentials and single worker. Then release the frontend changes. Test `06-scanned-invoice.pdf` through the deployed app and inspect the OCR stage, source evidence and result. Do not approve it merely to test OCR; repeated uploads after a completed run will exercise duplicate detection.
 
-The public Azure check used execution `f72c2c0a-b057-4416-bda8-d7c17fea9151`. It is now a real pending-review record; re-uploading the same invoice should trigger duplicate handling. The frontend release is being verified separately.
+The public Azure check used execution `f72c2c0a-b057-4416-bda8-d7c17fea9151`. It is now a real pending-review record; re-uploading the same invoice should trigger duplicate handling. The Vercel frontend was subsequently verified in a real browser, including the saved OCR stage and invoice fields. See `production-ui-check-results.json`.

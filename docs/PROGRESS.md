@@ -9,7 +9,7 @@
 - User screenshots confirm the public run `289a4956-3580-40a6-98d4-5728b61f3479` (NS-2026-LIVE-003, INR 10,000) completed in 6.1 seconds, was approved, and raised PO-2026-1001 accepted balance to INR 70,000, leaving INR 30,000.
 - Earlier local live tests remain in `live-test-results.json`. Those are historical results, not new production load/concurrency claims.
 
-## New implementation: backend live; frontend release in progress
+## New implementation: deployed and verified
 
 | Change | Evidence |
 |---|---|
@@ -24,9 +24,9 @@
 
 The OCR smoke report is in `ocr-check-results.json`. Single-page OCR took 5.75 seconds locally on Windows, not measured on Azure. UI browser checks use mocked API fixtures; real OCR/provider checks are a separate read-only test. This distinction is intentional.
 
-## Immediate next step
+## Deployment result
 
-The candidate deployed the backend successfully. Independent API checks passed: health, Supabase connectivity, approval filters and CORS. Public OCR run `f72c2c0a-b057-4416-bda8-d7c17fea9151` completed in 35.687 seconds, ready for review, with all 11 checks passing. It remains unapproved and no PO balance changed. Release and verify the matching frontend next. See `azure-ocr-check-results.json`.
+The candidate deployed the backend successfully. Independent API checks passed: health, Supabase connectivity, approval filters and CORS. Public OCR run `f72c2c0a-b057-4416-bda8-d7c17fea9151` completed in 35.687 seconds, ready for review, with all 11 checks passing. It remains unapproved and no PO balance changed. Frontend commit `741739d` is deployed through Vercel. Real-browser checks passed for layout, theme persistence, approved/pending filters, summary, OCR detail, form gating, and mobile overflow. No reviews were submitted during those checks. See `azure-ocr-check-results.json` and `production-ui-check-results.json`.
 
 ## Remaining work
 
@@ -38,3 +38,7 @@ The candidate deployed the backend successfully. Independent API checks passed: 
 - Update the final reviewer walkthrough, record the maximum five-minute video, and rehearse interview explanations.
 
 No payments are initiated. Existing approved invoices and purchase-order balances were not reset or altered by the new OCR checks.
+
+## Next user-facing step
+
+Open the deployed app and refresh to see the new theme controls. The OCR sample `NS-2026-OCR-004` is ready for human review; do not re-upload it to demonstrate a fresh success because it now exists in history. Continue with the separately requested ERPNext demo setup plan when ready.

@@ -4,7 +4,7 @@ Decision recorded 1 November 2026: existing Azure student credits may be consume
 
 ## Deployment status
 
-The initial backend is deployed as `ledgerly-api-bobby` in `ledgerly-api-bobby_group`, Central India, Linux B1/Python 3.13. The candidate verified `/health` and the public invoice approval workflow. The new OCR/review-filter backend is deployed. Public health, authenticated database connectivity, approved/pending filters, CORS, and one real scanned-invoice workflow were verified on 2 November (Asia/Calcutta). The matching frontend release is in progress. No authenticated Azure CLI or App Service connector is available in this workspace; deployment uses the candidate's Cloud Shell session.
+The initial backend is deployed as `ledgerly-api-bobby` in `ledgerly-api-bobby_group`, Central India, Linux B1/Python 3.13. The candidate verified `/health` and the public invoice approval workflow. The new OCR/review-filter backend is deployed. Public health, authenticated database connectivity, approved/pending filters, CORS, and one real scanned-invoice workflow were verified on 2 November (Asia/Calcutta). The matching frontend release is deployed and its live browser checks passed. See `production-ui-check-results.json`. No authenticated Azure CLI or App Service connector is available in this workspace; deployment uses the candidate's Cloud Shell session.
 
 ## Resource configuration
 

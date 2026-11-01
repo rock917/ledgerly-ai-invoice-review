@@ -4,7 +4,7 @@ PS-1 for the Zamp AI Solutions Analyst case study. Upload an invoice PDF, extrac
 
 **Live demo:** [Ledgerly](https://ledgerly-ai-invoice-review.vercel.app/) · [API documentation](https://ledgerly-api-bobby-h3e4dnf4g3hsh9ej.centralindia-01.azurewebsites.net/docs) · [Source](https://github.com/rock917/ledgerly-ai-invoice-review)
 
-**Current state:** the deployed text-PDF workflow has been exercised through Vercel and Azure, including human approval and the PO balance update. The new minimal layout, Light/Dark/System themes, clearer review controls, and local OCR are implemented and tested locally; the updated Azure backend and a real scanned-invoice run are now verified; the matching frontend release is in progress. Backend regression: 59 passed. See [progress](docs/PROGRESS.md), [OCR verification](docs/OCR.md), and the [ERPNext setup plan](docs/ERP_NEXT_PLAN.md).
+**Current state:** the minimal layout, Light/Dark/System themes, review controls, and scanned-PDF OCR are deployed and verified through Vercel and Azure. A real image-only invoice completed in 35.7 seconds with all 11 rules passing and remains unapproved. Live browser checks passed against the real API. Backend regression: 59 passed. See [progress](docs/PROGRESS.md), [OCR verification](docs/OCR.md), [production browser results](docs/production-ui-check-results.json), and the [ERPNext setup plan](docs/ERP_NEXT_PLAN.md).
 
 ## Reviewer walkthrough
 
@@ -30,7 +30,7 @@ flowchart LR
   H --> B
 ```
 
-Features implemented: stage events, source evidence, duplicate checks, remaining-PO validation, dashboard/history/search, private document links, review records, atomic approval, an invoice summary panel, Light/Dark/System themes, and local OCR for printed scans. Public text-PDF checks and local OCR checks are recorded separately; the public Azure OCR run completed in 35.7 seconds with all 11 checks passing; frontend release verification is in progress.
+Features implemented: stage events, source evidence, duplicate checks, remaining-PO validation, dashboard/history/search, private document links, review records, atomic approval, an invoice summary panel, Light/Dark/System themes, and local OCR for printed scans. Public text-PDF checks and local OCR checks are recorded separately; the public Azure OCR run completed in 35.7 seconds with all 11 checks passing; production browser verification passed.
 
 ## Windows setup
 
@@ -137,7 +137,7 @@ Business outcomes: ready, needs_review, blocked. Execution statuses: running, co
 5. Test upload, real AI extraction, review, PO balance, history after backend restart, and private PDF access **through the public frontend**. Verify all sample scenarios; do not equate a passing localhost build with deployment success.
 6. Check readiness before recording/interviewing. Supabase may pause inactive free projects; check before the interview. Stay within free quotas and monitor Azure credit consumption. The retained `render.yaml` is a free-tier fallback, not the selected host.
 
-The links above are the deployed initial version. Follow the backend-first update steps in [Azure deployment](docs/AZURE_DEPLOYMENT.md) for the new OCR and theme release.
+The links above serve the verified layout/theme/OCR release. Follow the backend-first update steps in [Azure deployment](docs/AZURE_DEPLOYMENT.md) for the new OCR and theme release.
 
 ## Limitations and next gates
 

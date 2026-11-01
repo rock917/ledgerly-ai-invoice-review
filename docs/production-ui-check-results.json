@@ -1,0 +1,21 @@
+{
+  "source": "https://ledgerly-ai-invoice-review.vercel.app",
+  "api": "real Azure API",
+  "mocked": false,
+  "tests": [
+    "new layout",
+    "theme change and persistence",
+    "approved filter",
+    "pending queue excludes approved",
+    "invoice summary",
+    "saved OCR stage and document fields",
+    "review form gate",
+    "mobile overflow",
+    "no browser errors"
+  ],
+  "all_passed": true,
+  "mutations": 0,
+  "release_commit": "741739d",
+  "verified_date_local": "2026-11-02",
+  "timezone": "Asia/Calcutta"
+}
