@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-02",
+  "release_commit": "2ae6733",
+  "checks": {
+    "azure_health": 200,
+    "unauthenticated_api_me": 401,
+    "production_login_screen": "passed",
+    "frontend_auth_controls_enabled": "passed",
+    "google_authorization_redirect": "passed",
+    "browser_runtime_errors": []
+  },
+  "user_reported": [
+    "SQL migration success",
+    "Azure auth ZIP deployment success",
+    "SMTP saved",
+    "Google provider and test users configured",
+    "Vercel auth variables saved"
+  ],
+  "not_yet_verified": [
+    "Google sign-in completion",
+    "email confirmation and recovery delivery",
+    "live private workspace provisioning",
+    "live two-account isolation"
+  ],
+  "pending_cleanup": [
+    "disable ENABLE_LEGACY_DEMO after live login verification",
+    "publish Google audience before recruiter access"
+  ]
+}

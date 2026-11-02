@@ -6,7 +6,7 @@ PS-1 for the Zamp AI Solutions Analyst case study. Upload an invoice PDF, extrac
 
 **Current state:** the minimal layout, Light/Dark/System themes, review controls, and scanned-PDF OCR are deployed and verified through Vercel and Azure. A real image-only invoice completed in 35.7 seconds with all 11 rules passing and remains unapproved. Live browser checks passed against the real API. Backend regression: 59 passed. See [progress](docs/PROGRESS.md), [OCR verification](docs/OCR.md), [production browser results](docs/production-ui-check-results.json), and the [ERPNext setup plan](docs/ERP_NEXT_PLAN.md).
 
-**Login release (not deployed yet):** this branch adds Google and email/password sign-in, private demo workspaces, and session-verified reviews. See [the rollout guide](docs/AUTH_SETUP.md). Apply the migration and deploy the scoped backend before releasing this frontend. Local verification: 73 backend tests, PostgreSQL migration/isolation checks, and mocked login browser checks. Live provider configuration remains pending.
+**Login release:** commit `2ae6733` is deployed. The public login screen and Google OAuth redirect are verified. The user applied the workspace migration and deployed the Azure backend; health returns 200 and unauthenticated `/api/me` returns 401. Full account login, SMTP delivery, and two-account workspace checks remain pending. Local verification: 73 backend tests, PostgreSQL migration/isolation checks, and mocked login browser checks. See [rollout steps](docs/AUTH_SETUP.md) and [deployment evidence](docs/auth-deployment-check-results.json).
 
 ## Reviewer walkthrough
 
@@ -139,7 +139,7 @@ Business outcomes: ready, needs_review, blocked. Execution statuses: running, co
 5. Test upload, real AI extraction, review, PO balance, history after backend restart, and private PDF access **through the public frontend**. Verify all sample scenarios; do not equate a passing localhost build with deployment success.
 6. Check readiness before recording/interviewing. Supabase may pause inactive free projects; check before the interview. Stay within free quotas and monitor Azure credit consumption. The retained `render.yaml` is a free-tier fallback, not the selected host.
 
-The links above serve the verified layout/theme/OCR release. The login release is separate and pending; follow [AUTH_SETUP.md](docs/AUTH_SETUP.md) before merging it into production.
+The links above serve the verified layout/theme/OCR release. The login release is deployed; complete the live-account checks and disable the temporary legacy bridge using [AUTH_SETUP.md](docs/AUTH_SETUP.md).
 
 ## Limitations and next gates
 

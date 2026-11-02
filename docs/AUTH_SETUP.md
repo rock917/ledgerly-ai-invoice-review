@@ -2,7 +2,7 @@
 
 This release adds Google and email/password login. Each verified account gets a private demo workspace with two sample vendors and POs (INR 100,000 and INR 50,000). History starts empty and accepted balances start at zero. Existing shared-demo records remain unchanged with `owner_id = NULL`; they are not assigned to new accounts.
 
-Status: implemented and tested locally. The SQL migration, live OAuth/email configuration, Azure backend update, and Vercel frontend update still require deployment. Passing local checks does not establish that external email delivery or Google consent is configured.
+Status (2 November 2026): login release `2ae6733` is on production main. The user reported successful migration, configured Google test users/SMTP/redirect URLs, and deployed the auth backend. Azure health and the unauthenticated login gate are verified. The Vercel login page loads with enabled Auth controls and redirects to Google. Full Google account sign-in, email confirmation/reset delivery, and live two-account isolation checks remain pending. Keep Google in Testing until verified, then publish the audience for recruiters and disable the temporary legacy-code bridge.
 
 ## 1. Database migration
 

@@ -44,8 +44,8 @@ No payments are initiated. Existing approved invoices and purchase-order balance
 Open the deployed app and refresh to see the new theme controls. The OCR sample `NS-2026-OCR-004` is ready for human review; do not re-upload it to demonstrate a fresh success because it now exists in history. Continue with the separately requested ERPNext demo setup plan when ready.
 
 
-## Login release — 2 November 2026, pending live setup
+## Login release — 2 November 2026, deployed; live account tests pending
 
 Implemented Google/email signup and login, confirmation/reset flow, logout, private workspace provisioning, verified session ownership, per-account sample POs, and reviewer UUID audit records. Themes and OCR remain supported. All 73 backend tests pass. PGlite tests execute the actual migration and verify idempotency, cross-owner constraints, independent same-invoice approvals, balance protection, and denied anon/authenticated access. Mock browser checks pass; see auth-ui-check-results.json.
 
-The live migration, Google OAuth client/provider, custom SMTP, Vercel public Auth variables, Azure release, and external-user checks remain pending. Existing production still uses the earlier layout/theme/OCR release. Do not release the login frontend before its database/backend dependencies. Existing shared history is preserved and will not appear in a new private account. Follow AUTH_SETUP.md. ERPNext remains a plan only.
+The user applied the migration, configured Google test users/SMTP/redirect URLs and Vercel public variables, and deployed the auth backend. Commit 2ae6733 was fast-forwarded to main and deployed by Vercel. Azure health returned 200, unauthenticated /api/me returned 401, and a real browser verified the enabled login screen and Google redirect. Full sign-in, email delivery, private workspace provisioning, and two-account isolation still need live account tests. Disable ENABLE_LEGACY_DEMO after successful sign-in, and publish the Google audience before recruiter access. Existing shared history is preserved and will not appear in a new private account. Follow AUTH_SETUP.md. ERPNext remains a plan only.
