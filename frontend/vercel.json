@@ -1,1 +1,1 @@
-{"rewrites":[{"source":"/((?!assets/).*)","destination":"/index.html"}]}
+{"rewrites":[{"source":"/privacy","destination":"/privacy/index.html"},{"source":"/privacy/","destination":"/privacy/index.html"},{"source":"/terms","destination":"/terms/index.html"},{"source":"/terms/","destination":"/terms/index.html"},{"source":"/((?!assets/|privacy/|terms/).*)","destination":"/index.html"}]}

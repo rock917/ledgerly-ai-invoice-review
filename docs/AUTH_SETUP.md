@@ -113,6 +113,12 @@ In a second terminal run `npm.cmd run test:auth --prefix frontend`. The script i
 
 The owner can inspect private demo records through Supabase administration. Passwords stay in Supabase Auth; application tables store account ID, name/email, sample reference records, documents, and workflow/review records. Storage is private; signed document links expire after 120 seconds. Use synthetic invoices. Account lifecycle/deletion tooling and organization-level roles are outside this demo release.
 
+## Public branding pages
+
+The frontend serves `/privacy/` and `/terms/` as static HTML without authentication or JavaScript. Both are linked from the login page and workspace footer. Google Branding should use the deployed homepage and these public URLs; verify they load after the Vercel deployment before saving them in Google. They describe the demo's actual providers, document-text processing through Groq, and manual deletion contact. Update these notices when data handling changes.
+
+Manual live checks reported by the owner on 2 November 2026: Google sign-in with two accounts; separate invoice histories; a foreign account's invoice URL returned `Execution not found`; email confirmation opened a new workspace; password recovery worked. These are user-reported checks and screenshots, not a comprehensive production security audit. Google production publishing remains pending completion of Branding.
+
 ## Rollback
 
 Before any private workspaces have been created, an old backend can be restored if needed. Once private workspaces exist, **do not restore the old unscoped backend**: it could expose records across accounts. Keep the new scoped backend and fix forward; the old frontend can temporarily use its legacy workspace if explicitly enabled. Preserve a database backup before any later destructive migration. No automatic rollback or data reset is performed by this release.

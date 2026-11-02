@@ -14,16 +14,19 @@
     "Azure auth ZIP deployment success",
     "SMTP saved",
     "Google provider and test users configured",
-    "Vercel auth variables saved"
+    "Vercel auth variables saved",
+    "Google sign-in completed with two accounts; screenshots show distinct workspace histories",
+    "Foreign-account invoice URL returned Execution not found with no invoice details (screenshot)",
+    "Email confirmation opened a new empty private workspace (screenshot)",
+    "Password recovery and subsequent sign-in worked",
+    "ENABLE_LEGACY_DEMO disabled in Azure"
   ],
   "not_yet_verified": [
-    "Google sign-in completion",
-    "email confirmation and recovery delivery",
-    "live private workspace provisioning",
-    "live two-account isolation"
+    "independent live check that legacy tokens are rejected",
+    "comprehensive live cross-account API and document-access checks",
+    "Google production audience and sign-in with a non-test account"
   ],
   "pending_cleanup": [
-    "disable ENABLE_LEGACY_DEMO after live login verification",
-    "publish Google audience before recruiter access"
+    "complete Google Branding with deployed public page URLs and publish audience"
   ]
 }

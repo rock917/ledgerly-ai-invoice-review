@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Privacy Policy | Ledgerly</title><meta name="description" content="How the Ledgerly invoice review demo uses account information, uploaded documents, and workspace records."><link rel="stylesheet" href="/assets/legal.css"></head>
+<body>
+<header><a class="brand" href="/">ledgerly.</a><a href="/">Return to Ledgerly</a></header>
+<main>
+<h1>Privacy Policy</h1><p class="date">Last updated: 2 November 2026</p>
+<p>Ledgerly is an invoice review demonstration operated by Bobby Ahirwar for a portfolio and case study. This notice explains how this demo handles information when you sign in and use your workspace.</p>
+<p class="notice">Use synthetic invoices only. Do not upload real financial records, bank details, government identifiers, confidential business documents, or other people's personal information.</p>
+<h2>Information we collect</h2>
+<ul><li><strong>Account information:</strong> your email address, display name, and account identifier. When you use Google sign-in, Google and Supabase authenticate you using basic identity permissions: openid, email, and profile. Ledgerly uses your name, email, and account identifier to open and identify your workspace. It does not request access to Gmail messages, Google Drive files, or contacts.</li>
+<li><strong>Workspace information:</strong> uploaded PDFs, extracted invoice fields and source excerpts, sample vendors and purchase orders, validation results, workflow events, review notes, decisions, and timestamps. Reviews are associated with your signed-in account.</li>
+<li><strong>Technical information:</strong> our hosting and authentication providers may process request metadata such as IP addresses, browser information, timestamps, and error logs to operate and protect their services.</li></ul>
+<h2>How we use information</h2>
+<p>We use this information to authenticate you, create your private demo workspace, extract invoice information, run validation checks, save review decisions, maintain an audit trail, troubleshoot errors, and limit misuse. No payments are initiated by Ledgerly.</p>
+<h2>Services that process information</h2>
+<ul><li><strong>Supabase:</strong> handles authentication and stores account and workspace records and uploaded PDFs in private storage. Supabase Auth handles email/password credentials; the Ledgerly backend does not receive your sign-in password.</li>
+<li><strong>Microsoft Azure:</strong> hosts the backend that processes uploaded documents and workflow requests. OCR for printed scans runs on that backend.</li>
+<li><strong>Groq:</strong> receives extracted document text to generate structured invoice fields. Do not include sensitive information in uploaded documents.</li>
+<li><strong>Vercel:</strong> hosts the frontend and serves the website to your browser.</li>
+<li><strong>Google:</strong> provides optional Google sign-in. Gmail SMTP is also used to deliver account confirmation and password-reset emails sent through Supabase.</li></ul>
+<p>These providers process information under their own policies and service terms. Processing may occur outside your country. Ledgerly does not sell account information or use it for advertising.</p>
+<h2>Browser storage and access</h2>
+<p>The app uses browser storage to keep your authentication session and theme preference. Sign out on shared devices. Workspace requests are restricted to the signed-in account; the demo operator and infrastructure providers may have administrative access needed to operate or troubleshoot the service.</p>
+<h2>Retention and deletion</h2>
+<p>Account and workspace records are retained until removed by the operator or in response to a deletion request. This demo does not currently provide automatic expiry or a self-service account deletion button. Demo data may also be reset or removed as the project changes; do not use Ledgerly as your only record storage.</p>
+<p>To request access, correction, or deletion of your account, documents, and workspace records, email <a href="mailto:thejacksparrow805@gmail.com">thejacksparrow805@gmail.com</a> from your registered address. We may need to verify ownership before acting. Provider logs and backups may remain subject to the providers' retention processes. Never send your password, access tokens, or reset links in a request.</p>
+<h2>Changes and contact</h2>
+<p>We may update this notice when the demo's data handling changes. The date above identifies the latest version. For privacy questions, contact Bobby Ahirwar at <a href="mailto:thejacksparrow805@gmail.com">thejacksparrow805@gmail.com</a>.</p>
+</main>
+<footer><a href="/">Ledgerly home</a><a href="/terms/">Terms of Use</a><span>Portfolio demo · No payments initiated</span></footer>
+</body></html>

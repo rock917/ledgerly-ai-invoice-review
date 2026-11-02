@@ -55,7 +55,7 @@ export function Execution({ connected }: { connected: boolean }) {
     finally { setBusy(false) }
   }
   const run = live || data
-  if (!run) return <><Link className="back-link" to="/history"><ArrowLeft size={15}/>Run history</Link>{error && <ErrorBanner message={error} retry={refresh}/>}<div className="data-placeholder"><FileSearch size={30}/><h3>{loading ? 'Loading execution…' : 'Connect the workspace to inspect this run.'}</h3></div></>
+  if (!run) return <><Link className="back-link" to="/history"><ArrowLeft size={15}/>Run history</Link>{error && <ErrorBanner message={error} retry={refresh}/>}<div className="data-placeholder"><FileSearch size={30}/><h3>{loading ? 'Loading execution…' : 'This run is unavailable.'}</h3><p>Open an invoice from your run history to inspect its details.</p></div></>
   const reviewFinal = ['approved', 'rejected'].includes(run.review_status)
   const missingReviewFields = [comment.trim().length < 5 ? 'Decision notes: at least 5 characters.' : ''].filter(Boolean)
   const reviewDisabled = busy || missingReviewFields.length > 0
