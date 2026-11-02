@@ -2,6 +2,8 @@
 
 All documents and reference records are synthetic. Amounts use INR; PO-2026-1001 has a gross limit of 100,000. Tax zero is an explicit test assumption, not a legal claim.
 
+**Current private workspaces:** each signed-in account gets its own POs and invoice history. Prior approvals and duplicate records mentioned below belong to the earlier shared demo; they do not prepopulate a new account. Download or select five samples in **New invoice → Try the sample walkthrough**. The in-app order is valid → duplicate → overage → missing number → scan; approve the valid invoice before trying overage. See [walkthrough](../docs/DEMO_WALKTHROUGH.md). Existing accounts retain their own history and balances.
+
 Run in this order against the seeded database:
 
 | Input | Preconditions | Expected behaviour | Live actual result |

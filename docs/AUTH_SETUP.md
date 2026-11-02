@@ -2,7 +2,7 @@
 
 This release adds Google and email/password login. Each verified account gets a private demo workspace with two sample vendors and POs (INR 100,000 and INR 50,000). History starts empty and accepted balances start at zero. Existing shared-demo records remain unchanged with `owner_id = NULL`; they are not assigned to new accounts.
 
-Status (2 November 2026): login release `2ae6733` is on production main. The user reported successful migration, configured Google test users/SMTP/redirect URLs, and deployed the auth backend. Azure health and the unauthenticated login gate are verified. The Vercel login page loads with enabled Auth controls and redirects to Google. Full Google account sign-in, email confirmation/reset delivery, and live two-account isolation checks remain pending. Keep Google in Testing until verified, then publish the audience for recruiters and disable the temporary legacy-code bridge.
+Status (updated 3 November 2026): login release `2ae6733` is deployed. Azure health and the unauthenticated login gate were independently verified. The owner reported successful Google login with test and non-test accounts, confirmed-email signup, password recovery, private workspace provisioning, and a foreign-account invoice URL returning `Execution not found`. Google Audience is In production / External. The owner reported disabling the legacy-code bridge. These manual checks do not replace comprehensive live API isolation or concurrency testing; see `auth-deployment-check-results.json` for the evidence boundary.
 
 ## 1. Database migration
 
@@ -117,7 +117,7 @@ The owner can inspect private demo records through Supabase administration. Pass
 
 The frontend serves `/privacy/` and `/terms/` as static HTML without authentication or JavaScript. Both are linked from the login page and workspace footer. Google Branding should use the deployed homepage and these public URLs; verify they load after the Vercel deployment before saving them in Google. They describe the demo's actual providers, document-text processing through Groq, and manual deletion contact. Update these notices when data handling changes.
 
-Manual live checks reported by the owner on 2 November 2026: Google sign-in with two accounts; separate invoice histories; a foreign account's invoice URL returned `Execution not found`; email confirmation opened a new workspace; password recovery worked. These are user-reported checks and screenshots, not a comprehensive production security audit. Google production publishing remains pending completion of Branding.
+Manual live checks reported by the owner on 2 November 2026: Google sign-in with two accounts; separate invoice histories; a foreign account's invoice URL returned `Execution not found`; email confirmation opened a new workspace; password recovery worked. Google production publishing and login with a non-test account subsequently passed by owner report/screenshots. These are not a comprehensive production security audit.
 
 ## Rollback
 

@@ -16,6 +16,7 @@ export function Dashboard({ connected }: { connected: boolean }) {
   ]
   return <><div className="page-heading"><div><div className="eyebrow">ACCOUNTS PAYABLE</div><h1>Your invoice workspace.</h1><p>Every invoice, every check, every decision. In one place.</p></div><Button asChild><Link to="/new"><Upload size={17}/>Upload invoice</Link></Button></div>
     {error && <ErrorBanner message={error} retry={refresh}/>}
+    {data?.metrics.total === 0 && <section className="demo-welcome"><div><h2>Start with a sample invoice</h2><p>Your workspace is ready. Try a valid invoice, then explore duplicate checks, missing fields, and OCR.</p></div><Button asChild variant="outline"><Link to="/new#sample-guide">Open sample walkthrough</Link></Button></section>}
     <div className="metric-grid">{cards.map(({key, title, detail, icon: Icon}) => <section className={`metric-card metric-${key}`} key={key}><span className="metric-icon"><Icon size={20}/></span><div><span className="metric-title">{title}</span><strong className="metric-value">{data?.metrics[key] ?? '—'}</strong><small>{loading ? 'Loading…' : detail}</small></div></section>)}</div>
     <InvoiceInbox connected={connected}/>
   </>

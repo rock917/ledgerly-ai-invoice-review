@@ -1,4 +1,12 @@
-# Ledgerly progress - 2 November 2026
+# Ledgerly progress - 3 November 2026
+
+## Latest: recruiter walkthrough
+
+- Added five downloadable PDFs and explicit Use sample controls on New invoice, plus an empty-workspace entry point. Selection fills the upload form; Start workflow is still required.
+- Guide explains scenario order, review notes, changing PO balances, duplicate history, and slower OCR. No workspace reset is performed.
+- Public copies match the original synthetic PDFs byte for byte; the scan has no text layer. TypeScript/Vite build and mocked browser checks passed, including all downloads, no automatic submissions, invalid-PDF handling, explicit multipart upload, desktop/mobile layout and both themes.
+- `DEMO_WALKTHROUGH.md` includes reviewer instructions and a suggested recording outline. No video has been recorded by the assistant.
+- Owner screenshots/report confirm Google OAuth production mode and successful sign-in with a non-test account, plus email confirmation and password recovery. The cross-account invoice URL test returned Execution not found. Broader live API isolation testing remains outside those manual checks.
 
 ## Deployed baseline
 
@@ -34,18 +42,18 @@ The candidate deployed the backend successfully. Independent API checks passed: 
 - Keep the same single worker/instance; in-process workflows are not durable.
 - Exercise actual PostgreSQL concurrent approval behavior and deployment load separately.
 - Set up the planned local ERPNext demo, then implement/test a connector against real test records. No simulated sync success.
-- Login is implemented locally; see the pending rollout below.
-- Update the final reviewer walkthrough, record the maximum five-minute video, and rehearse interview explanations.
+- Login is deployed; owner-reported live checks are recorded below and in `auth-deployment-check-results.json`.
+- Record the demo video using `DEMO_WALKTHROUGH.md`, confirm submission requirements against the candidate guide, and rehearse interview explanations.
 
 No payments are initiated. Existing approved invoices and purchase-order balances were not reset or altered by the new OCR checks.
 
 ## Next user-facing step
 
-Open the deployed app and refresh to see the new theme controls. The OCR sample `NS-2026-OCR-004` is ready for human review; do not re-upload it to demonstrate a fresh success because it now exists in history. Continue with the separately requested ERPNext demo setup plan when ready.
+Open New invoice and try the sample walkthrough in a workspace with fresh sample history. Prepare the recording using `DEMO_WALKTHROUGH.md`. Existing history and balances are retained; a previously processed sample can trigger duplicate detection in that account. ERPNext remains a separately documented setup plan.
 
 
-## Login release — 2 November 2026, deployed; live account tests pending
+## Login release — deployed; manual live checks completed
 
 Implemented Google/email signup and login, confirmation/reset flow, logout, private workspace provisioning, verified session ownership, per-account sample POs, and reviewer UUID audit records. Themes and OCR remain supported. All 73 backend tests pass. PGlite tests execute the actual migration and verify idempotency, cross-owner constraints, independent same-invoice approvals, balance protection, and denied anon/authenticated access. Mock browser checks pass; see auth-ui-check-results.json.
 
-The user applied the migration, configured Google test users/SMTP/redirect URLs and Vercel public variables, and deployed the auth backend. Commit 2ae6733 was fast-forwarded to main and deployed by Vercel. Azure health returned 200, unauthenticated /api/me returned 401, and a real browser verified the enabled login screen and Google redirect. Full sign-in, email delivery, private workspace provisioning, and two-account isolation still need live account tests. Disable ENABLE_LEGACY_DEMO after successful sign-in, and publish the Google audience before recruiter access. Existing shared history is preserved and will not appear in a new private account. Follow AUTH_SETUP.md. ERPNext remains a plan only.
+The user applied the migration, configured SMTP/redirect URLs and Vercel public variables, and deployed the auth backend. Commit 2ae6733 was fast-forwarded to main and deployed by Vercel. Azure health returned 200, unauthenticated /api/me returned 401, and a real browser verified the enabled login screen and Google redirect. The owner subsequently verified Google sign-in (including a non-test account), email confirmation, recovery, private workspaces, and a cross-account invoice URL denial. Google Audience is In production; the owner reported disabling ENABLE_LEGACY_DEMO. These are bounded manual checks, not a comprehensive audit. Existing shared history is preserved and does not appear in a new private account. Follow AUTH_SETUP.md. ERPNext remains a plan only.

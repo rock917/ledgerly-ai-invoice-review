@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "mode": "mock Auth/API; no live accounts, emails, or database writes",
+  "mode": "mock Auth/API; real local sample assets; no live accounts, emails, or database writes",
   "checks": [
     "unauthenticated access gate",
     "email signup confirmation",
@@ -11,9 +11,16 @@
     "logout removes workspace and persists",
     "light/dark themes",
     "mobile overflow",
-    "Google OAuth redirect and PKCE parameters"
+    "Google OAuth redirect and PKCE parameters",
+    "empty workspace sample walkthrough link",
+    "five sample downloads match original PDFs",
+    "sample selection makes no upload requests",
+    "invalid PDF response handled without submission",
+    "explicit workflow submission includes selected PDF bytes",
+    "sample guide desktop/mobile and both themes"
   ],
   "limitations": [
-    "Google OAuth consent and external email delivery require provider setup and live verification"
+    "Google OAuth consent and external email delivery require provider setup and live verification",
+    "sample upload request intercepted; no new live workflow executed by this check"
   ]
 }

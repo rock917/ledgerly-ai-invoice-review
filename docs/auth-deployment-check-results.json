@@ -19,14 +19,13 @@
     "Foreign-account invoice URL returned Execution not found with no invoice details (screenshot)",
     "Email confirmation opened a new empty private workspace (screenshot)",
     "Password recovery and subsequent sign-in worked",
-    "ENABLE_LEGACY_DEMO disabled in Azure"
+    "ENABLE_LEGACY_DEMO disabled in Azure",
+    "Google OAuth Audience shows In production / External (screenshot)",
+    "Google sign-in with a non-test Gmail account opened a new private workspace (screenshot)"
   ],
   "not_yet_verified": [
     "independent live check that legacy tokens are rejected",
-    "comprehensive live cross-account API and document-access checks",
-    "Google production audience and sign-in with a non-test account"
+    "comprehensive live cross-account API and document-access checks"
   ],
-  "pending_cleanup": [
-    "complete Google Branding with deployed public page URLs and publish audience"
-  ]
+  "pending_cleanup": []
 }
