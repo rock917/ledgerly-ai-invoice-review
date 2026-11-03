@@ -1,11 +1,17 @@
 # Ledgerly progress - 3 November 2026
 
-## Latest: recruiter walkthrough
+## Latest: embedded tutorial video
+
+- Added a roughly 71-second captioned WebM walkthrough to the sign-in page and New invoice, with an Overview link, native playback/fullscreen controls, poster and text transcript. No autoplay or external video host.
+- Recorded locally with synthetic Auth/API responses, clearly labeled staged sample results. Covers sign-in, sample selection, workflow submission, rules/evidence, review notes and the PO balance. No live accounts, emails, approvals or database writes.
+- TypeScript/Vite build, existing mocked auth/sample/review browser checks, and video playback/seeking/mobile checks pass. Encoded video frames inspected to ensure review controls remain visible above the captions.
+
+## Recruiter sample walkthrough
 
 - Added five downloadable PDFs and explicit Use sample controls on New invoice, plus an empty-workspace entry point. Selection fills the upload form; Start workflow is still required.
 - Guide explains scenario order, review notes, changing PO balances, duplicate history, and slower OCR. No workspace reset is performed.
 - Public copies match the original synthetic PDFs byte for byte; the scan has no text layer. TypeScript/Vite build and mocked browser checks passed, including all downloads, no automatic submissions, invalid-PDF handling, explicit multipart upload, desktop/mobile layout and both themes.
-- `DEMO_WALKTHROUGH.md` includes reviewer instructions and a suggested recording outline. No video has been recorded by the assistant.
+- `DEMO_WALKTHROUGH.md` includes reviewer instructions and a suggested recording outline. A short staged tutorial is now recorded; see the video update below. It is instructional material, not a new live-provider test.
 - Owner screenshots/report confirm Google OAuth production mode and successful sign-in with a non-test account, plus email confirmation and password recovery. The cross-account invoice URL test returned Execution not found. Broader live API isolation testing remains outside those manual checks.
 
 ## Deployed baseline

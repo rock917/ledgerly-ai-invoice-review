@@ -20,7 +20,36 @@ If the OCR invoice passes and you approve it after step 1, accepted becomes INR 
 
 Approved and rejected invoices remain in Run history and the Overview filters. Pending reviews contains records awaiting a final human decision. Approval records a demo decision and updates the PO balance; it never initiates payment.
 
-## Suggested five-minute recording outline
+## Embedded quick-tour video
+
+The sign-in page has an expandable **See how Ledgerly works** player, available without an account. Signed-in users can follow **Watch the quick tour** from Overview or New invoice. The player has native playback, seek and fullscreen controls, no autoplay, a poster and a readable transcript. It loads the video only when requested (`preload="none"`).
+
+The approximately 71-second silent WebM has instructions burned into the frames. It uses the real local frontend with mocked authentication and API responses, labeled **GUIDED DEMO · STAGED SAMPLE RESULTS** throughout. It is a how-to demonstration, not evidence of live provider execution speed, accuracy or database writes. No real passwords, tokens or accounts appear. The video is about 9 MB, served as an ordinary Vercel static asset without a paid video service. Current Chrome playback/seeking and mobile layout were checked; other browser engines were not independently tested. A text transcript provides an alternative.
+
+To reproduce from the repository root (Chrome installed):
+
+```powershell
+npx.cmd --prefix frontend playwright install ffmpeg
+# In a dedicated terminal, set these process-only fake values. Do not edit .env.
+$env:VITE_SUPABASE_URL='https://auth.example.test'
+$env:VITE_SUPABASE_PUBLISHABLE_KEY='sb_publishable_mock_for_tests'
+$env:VITE_API_URL='http://127.0.0.1:8001'
+npm.cmd run dev --prefix frontend -- --host 127.0.0.1 --port 5176
+```
+
+In another terminal:
+
+```powershell
+npm.cmd run record:walkthrough --prefix frontend
+npm.cmd run test:tutorial --prefix frontend
+# Inspect the exported encoded frames before choosing a poster.
+Copy-Item tmp/tutorial/frames/12.jpg frontend/public/assets/tutorial/poster.jpg
+npm.cmd run build --prefix frontend
+```
+
+The recorder blocks requests outside the local frontend and its two fake Auth/API origins. Its output is `frontend/public/assets/tutorial/ledgerly-walkthrough.webm`; temporary recordings, chapter notes and QA frames remain under ignored `tmp/tutorial/`. Use a 1280 × 960 capture: the height is divisible by 16, and the extra document space keeps review buttons above the caption strip. Avoid setting fake environment values in the terminal used for a production build.
+
+## Suggested five-minute assessment recording outline
 
 This is a proposed recording structure, not a claim about the assessment's required video length. Check the candidate guide before final submission.
 

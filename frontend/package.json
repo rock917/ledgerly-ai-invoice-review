@@ -7,7 +7,9 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test:auth": "node tests/auth.e2e.cjs"
+    "test:auth": "node tests/auth.e2e.cjs",
+    "test:tutorial": "node tests/tutorial.e2e.cjs",
+    "record:walkthrough": "node scripts/record-walkthrough.cjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",
