@@ -6,6 +6,8 @@
 - Recorded locally with synthetic Auth/API responses, clearly labeled staged sample results. Covers sign-in, sample selection, workflow submission, rules/evidence, review notes and the PO balance. No live accounts, emails, approvals or database writes.
 - TypeScript/Vite build, existing mocked auth/sample/review browser checks, and video playback/seeking/mobile checks pass. Encoded video frames inspected to ensure review controls remain visible above the captions.
 
+- Published through GitHub/Vercel. Read-only public-site checks passed for anonymous playback, seeking, transcript, mobile layout and HTTP 206 byte-range delivery. See `tutorial-check-results.json`.
+
 ## Recruiter sample walkthrough
 
 - Added five downloadable PDFs and explicit Use sample controls on New invoice, plus an empty-workspace entry point. Selection fills the upload form; Start workflow is still required.

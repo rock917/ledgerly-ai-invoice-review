@@ -37,7 +37,14 @@ const base = process.env.AUTH_TEST_URL || 'http://127.0.0.1:5176';
       v.style.cssText = 'display:block;width:1280px;height:960px;max-width:none;border:0;border-radius:0'; v.controls = false;
     });
     for (const second of [5, 12, 18, 25, 31, 37, 43, 53, 58, 64, 71]) {
-      await video.evaluate(async (v, t) => { v.currentTime = t; await new Promise(resolve => v.addEventListener('seeked', resolve, { once: true })); }, second);
+      await video.evaluate(async (v, t) => {
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => { v.removeEventListener('seeked', done); reject(new Error(`Seeking to ${t}s timed out (readyState ${v.readyState}, networkState ${v.networkState})`)); }, 20000);
+          function done() { clearTimeout(timeout); resolve(); }
+          v.addEventListener('seeked', done, { once: true });
+          v.currentTime = t;
+        });
+      }, second);
       await page.screenshot({ path: path.join(root, `tmp/tutorial/frames/${second}.jpg`) });
     }
     await page.goto(base); await page.locator('.auth-tour > summary').click();

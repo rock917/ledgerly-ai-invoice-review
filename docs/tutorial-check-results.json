@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-03",
+  "status": "passed",
+  "deployment_commit": "521b418",
+  "site": "https://ledgerly-ai-invoice-review.vercel.app",
+  "video": {
+    "path": "/assets/tutorial/ledgerly-walkthrough.webm",
+    "duration_seconds": 71.08,
+    "width": 1280,
+    "height": 960,
+    "bytes": 9137728,
+    "mode": "staged synthetic Auth/API responses; no live provider execution in the recording"
+  },
+  "checks": [
+    "TypeScript/Vite build",
+    "existing mocked auth/sample/review browser suite",
+    "public anonymous tutorial access",
+    "native playback and seeking through final scene in Chrome",
+    "no autoplay and preload none",
+    "text transcript",
+    "light and dark player layouts",
+    "390px mobile width without horizontal overflow",
+    "HTTP 206 byte ranges at file start and near end; video/webm MIME"
+  ],
+  "limitations": [
+    "Other browser engines not independently tested",
+    "Tutorial does not establish live OCR speed or extraction accuracy"
+  ],
+  "live_mutations": "none"
+}
