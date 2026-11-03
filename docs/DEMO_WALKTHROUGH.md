@@ -24,7 +24,7 @@ Approved and rejected invoices remain in Run history and the Overview filters. P
 
 The sign-in page has an expandable **See how Ledgerly works** player, available without an account. Signed-in users can follow **Watch the quick tour** from Overview or New invoice. The player has native playback, seek and fullscreen controls, no autoplay, a poster and a readable transcript. It loads the video only when requested (`preload="none"`).
 
-The approximately 71-second silent WebM has instructions burned into the frames. It uses the real local frontend with mocked authentication and API responses, labeled **GUIDED DEMO · STAGED SAMPLE RESULTS** throughout. It is a how-to demonstration, not evidence of live provider execution speed, accuracy or database writes. No real passwords, tokens or accounts appear. The video is about 9 MB, served as an ordinary Vercel static asset without a paid video service. Current Chrome playback/seeking and mobile layout were checked; other browser engines were not independently tested. A text transcript provides an alternative.
+The approximately 94-second MP4 has English AI narration (Neerja, Indian English), instructions burned into the frames, and optional English narration subtitles. Native controls allow muting. It uses the real local frontend with mocked authentication and API responses, labeled **GUIDED DEMO · STAGED SAMPLE RESULTS** throughout. It is a how-to demonstration, not evidence of live provider execution speed, accuracy or database writes. No real passwords, tokens or accounts appear. The narrated video is about 3 MB, served as an ordinary Vercel static asset without a paid video service. Chrome audio decoding, playback/seeking and mobile layout were checked; other browser engines were not independently tested. Written steps provide an alternative.
 
 To reproduce from the repository root (Chrome installed):
 
@@ -41,13 +41,18 @@ In another terminal:
 
 ```powershell
 npm.cmd run record:walkthrough --prefix frontend
+# Free local build tooling, separate from application dependencies:
+.venv/Scripts/python.exe -m pip install edge-tts==7.3.1 imageio-ffmpeg==0.8.0
+# Verify scene boundaries in narrate-walkthrough.py if the recording changes.
+.venv/Scripts/python.exe frontend/scripts/narrate-walkthrough.py
 npm.cmd run test:tutorial --prefix frontend
-# Inspect the exported encoded frames before choosing a poster.
-Copy-Item tmp/tutorial/frames/12.jpg frontend/public/assets/tutorial/poster.jpg
+# Inspect the exported encoded frames; retain the existing sample-guide poster.
 npm.cmd run build --prefix frontend
 ```
 
 The recorder blocks requests outside the local frontend and its two fake Auth/API origins. Its output is `frontend/public/assets/tutorial/ledgerly-walkthrough.webm`; temporary recordings, chapter notes and QA frames remain under ignored `tmp/tutorial/`. Use a 1280 × 960 capture: the height is divisible by 16, and the extra document space keeps review buttons above the caption strip. Avoid setting fake environment values in the terminal used for a production build.
+
+The narration builder sends only the public tutorial script to the online Edge speech service through edge-tts. It uses no API key or paid subscription; service availability may change. Playback uses the generated static MP4 and makes no speech-service calls. Each scene holds its final frame when needed to finish the narration, with a short pause before the next scene. The builder also writes `narration.vtt` and an ignored timing report. Narration is explicitly labeled AI-generated in the player description.
 
 ## Suggested five-minute assessment recording outline
 

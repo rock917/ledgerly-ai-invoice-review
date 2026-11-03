@@ -5,10 +5,11 @@ export function WalkthroughVideo() {
     <div className="panel-heading"><div><h2 id="quick-tour-title"><PlayCircle size={20} aria-hidden="true"/>Watch the quick tour</h2><p>From your first sample invoice to a recorded review.</p></div></div>
     <div className="walkthrough-content">
       <video controls playsInline preload="none" poster="/assets/tutorial/poster.jpg" aria-label="Ledgerly quick tour: sign in, upload a sample and review an invoice" aria-describedby="quick-tour-description">
-        <source src="/assets/tutorial/ledgerly-walkthrough.webm" type="video/webm"/>
-        Your browser cannot play this video. <a href="/assets/tutorial/ledgerly-walkthrough.webm">Download the walkthrough</a> or read the steps below.
+        <source src="/assets/tutorial/ledgerly-walkthrough-narrated.mp4" type="video/mp4"/>
+        <track kind="captions" src="/assets/tutorial/narration.vtt" srcLang="en" label="English narration"/>
+        Your browser cannot play this video. <a href="/assets/tutorial/ledgerly-walkthrough-narrated.mp4">Download the walkthrough</a> or read the steps below.
       </video>
-      <p id="quick-tour-description" className="field-help">About 1 minute · Captioned on screen · No sound needed · Staged tutorial with synthetic sample results. Actual processing time and outcomes vary with your documents and workspace history.</p>
+      <p id="quick-tour-description" className="field-help">About 2 minutes · AI voice narration in English · On-screen captions · Use the player controls to mute or turn on narration subtitles. Staged tutorial with synthetic sample results. Actual processing time and outcomes vary with your documents and workspace history.</p>
       <details className="walkthrough-transcript"><summary>Read the walkthrough steps</summary><ol>
         <li>Sign in with Google, or create an email account and confirm your email. Each account opens a private demo workspace.</li>
         <li>Open <strong>New invoice → Try the sample walkthrough</strong>. Start with <strong>Approve a valid invoice</strong> in a fresh workspace.</li>

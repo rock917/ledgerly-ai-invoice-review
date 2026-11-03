@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-03",
+  "status": "local checks passed; deployment pending",
+  "video": {
+    "path": "/assets/tutorial/ledgerly-walkthrough-narrated.mp4",
+    "duration_seconds": 93.921333,
+    "bytes": 2987592,
+    "width": 1280,
+    "height": 960,
+    "video_codec": "H.264",
+    "audio_codec": "AAC, mono, 48000 Hz",
+    "voice": "en-IN-NeerjaNeural",
+    "peak_volume_db": -1.4,
+    "mode": "staged synthetic tutorial, explicitly labeled AI narration"
+  },
+  "checks": [
+    "TypeScript/Vite build",
+    "Chrome anonymous access, no autoplay, preload none",
+    "Audio decoded during playback; mute toggles",
+    "11 narration subtitle cues loaded",
+    "Seeking across all scenes including 90 seconds",
+    "Readable steps, light/dark themes, 390px mobile without overflow",
+    "Full audio stream decoded without errors; measured peak below clipping",
+    "Encoded review and purchase-order frames visually inspected"
+  ],
+  "limitations": ["Other browser engines not independently tested", "No claim of live processing performance from staged footage"],
+  "live_account_mutations": "none"
+}

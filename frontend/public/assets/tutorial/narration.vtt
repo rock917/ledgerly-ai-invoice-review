@@ -1,0 +1,34 @@
+WEBVTT
+
+00:00:00.300 --> 00:00:07.140
+Welcome to Ledgerly. Sign in with Google or email to open your private workspace.
+
+00:00:07.980 --> 00:00:15.612
+Your workspace starts with sample purchase orders. Use synthetic invoices for this demo.
+
+00:00:16.420 --> 00:00:25.636
+Open the sample walkthrough and choose Approve a valid invoice. Use sample selects the PDF without uploading it.
+
+00:00:26.460 --> 00:00:33.156
+Check the filename, then start the workflow. Scanned documents may take longer.
+
+00:00:33.980 --> 00:00:41.012
+Ready for approval means the checks passed. A person still needs to review the invoice.
+
+00:00:41.820 --> 00:00:49.428
+Inspect the vendor, duplicate and purchase order checks. Expand a rule to see its reasoning.
+
+00:00:50.260 --> 00:00:56.068
+Compare the extracted values and source excerpts with the original PDF.
+
+00:00:57.300 --> 00:01:05.268
+Add a meaningful review note with at least five characters. Then approve after checking the evidence.
+
+00:01:06.100 --> 00:01:12.412
+If checks remain unresolved, request information or reject the invoice instead.
+
+00:01:13.220 --> 00:01:23.156
+Open Purchase orders. Approving sixty thousand rupees leaves forty thousand on this sample order. No payment is sent.
+
+00:01:23.980 --> 00:01:33.316
+Now try the duplicate, overage, missing information and scanned samples. Your workspace history affects the results.

@@ -57,6 +57,8 @@ No payments are initiated. Existing approved invoices and purchase-order balance
 
 ## Next user-facing step
 
+The quick tour now includes a 94-second English AI voiceover, optional narration subtitles and native mute controls. It retains the staged-demo label and burned-in instructions. The narration is pre-generated using free local tooling and an online speech service; viewers play a static MP4, with no paid speech API or backend change. TypeScript/Vite build and local Chrome checks passed for audio decoding, 11 subtitle cues, seeking, transcript, themes and mobile width. See `narration-check-results.json` for release verification.
+
 Open New invoice and try the sample walkthrough in a workspace with fresh sample history. Prepare the recording using `DEMO_WALKTHROUGH.md`. Existing history and balances are retained; a previously processed sample can trigger duplicate detection in that account. ERPNext remains a separately documented setup plan.
 
 

@@ -10,7 +10,7 @@ PS-1 for the Zamp AI Solutions Analyst case study. Upload an invoice PDF, extrac
 
 ## Reviewer walkthrough
 
-Watch the short captioned tutorial on the sign-in page or **New invoice → Watch the quick tour**. A text transcript is included. The video uses staged synthetic results to explain the UI; it is separate from live verification evidence.
+Watch the 94-second tutorial with English AI narration on the sign-in page or **New invoice → Watch the quick tour**. On-screen instructions, optional narration subtitles, mute controls and written steps are included. The video uses staged synthetic results to explain the UI; it is separate from live verification evidence.
 
 - Sign in with Google or confirmed email/password. Open **New invoice → Try the sample walkthrough** for five downloadable synthetic PDFs and a **Use sample** shortcut. Selecting a sample does not submit it; click **Start workflow**, then inspect the evidence and record a review. Each new account has its own POs and invoice history.
 - Follow the [guided demo and recording outline](docs/DEMO_WALKTHROUGH.md). For predictable balances, use fresh sample history and approve the first ₹60,000 invoice before trying the ₹45,000 overage example. Existing records are never reset by the guide.

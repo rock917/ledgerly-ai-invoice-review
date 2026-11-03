@@ -21,11 +21,16 @@ const base = process.env.AUTH_TEST_URL || 'http://127.0.0.1:5176';
       return { duration: v.duration, width: v.videoWidth, height: v.videoHeight };
     });
     console.log(JSON.stringify(metadata));
-    assert(metadata.duration > 60 && metadata.duration < 100);
+    assert(metadata.duration > 70 && metadata.duration < 150);
     assert.equal(metadata.width, 1280); assert.equal(metadata.height, 960);
     await video.evaluate(v => v.play());
     await page.waitForTimeout(700);
     assert(await video.evaluate(v => v.currentTime > 0 && !v.paused));
+    assert(await video.evaluate(v => v.webkitAudioDecodedByteCount > 0), 'Narration audio must decode');
+    await video.evaluate(v => { v.muted = true; });
+    assert(await video.evaluate(v => v.muted));
+    await video.evaluate(v => { v.muted = false; v.textTracks[0].mode = 'hidden'; });
+    await page.waitForFunction(() => document.querySelector('video').textTracks[0].cues?.length === 11);
     await video.evaluate(v => v.pause());
     fs.mkdirSync(path.join(root, 'tmp/tutorial/frames'), { recursive: true });
     // Export frames from the encoded video, not the original source UI.
@@ -36,7 +41,7 @@ const base = process.env.AUTH_TEST_URL || 'http://127.0.0.1:5176';
       document.body.style.cssText = 'margin:0;padding:0';
       v.style.cssText = 'display:block;width:1280px;height:960px;max-width:none;border:0;border-radius:0'; v.controls = false;
     });
-    for (const second of [5, 12, 18, 25, 31, 37, 43, 53, 58, 64, 71]) {
+    for (const second of [4, 12, 21, 30, 38, 46, 54, 61, 69, 78, 90]) {
       await video.evaluate(async (v, t) => {
         await new Promise((resolve, reject) => {
           const timeout = setTimeout(() => { v.removeEventListener('seeked', done); reject(new Error(`Seeking to ${t}s timed out (readyState ${v.readyState}, networkState ${v.networkState})`)); }, 20000);
@@ -58,6 +63,6 @@ const base = process.env.AUTH_TEST_URL || 'http://127.0.0.1:5176';
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
     await page.locator('.walkthrough-video').screenshot({ path: path.join(root, 'tmp/tutorial/player-mobile.png') });
     assert.deepEqual(errors, []);
-    console.log('PASS: anonymous access, no autoplay, video metadata, playback, seeking, transcript, themes and mobile overflow.');
+    console.log('PASS: anonymous access, no autoplay, video metadata, narration audio decoding, mute, 11 subtitle cues, playback, seeking, transcript, themes and mobile overflow.');
   } finally { await browser.close(); }
 })().catch(e => { console.error(e); process.exitCode = 1; });
