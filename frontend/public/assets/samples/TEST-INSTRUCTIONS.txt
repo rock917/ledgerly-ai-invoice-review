@@ -1,0 +1,51 @@
+LEDGERLY - INTERVIEW SAMPLE INVOICES
+
+Open https://ledgerly-ai-invoice-review.vercel.app and sign in.
+Each account has a private workspace. These are synthetic documents only.
+ERPNext is not needed. No payments are initiated.
+
+BEFORE STARTING
+Use a fresh workspace with unused sample invoice numbers. Purchase orders
+should show PO-2026-1001 with INR 100,000 remaining and INR 0 accepted.
+Existing history affects duplicate checks and balances. Downloading these
+files does not reset your workspace. Do not upload all files at once.
+
+RUN IN THIS ORDER (not filename order)
+
+1. HAPPY PATH: 01-valid-partial-invoice.pdf - INR 60,000
+   New invoice > upload PDF > Start workflow.
+   Expected: Ready for approval. Inspect the evidence and checks, enter a
+   review note of at least five characters, then Approve invoice.
+   Check Purchase orders: accepted INR 60,000; remaining INR 40,000.
+   Complete this approval before running the overage case below.
+
+2. EDGE CASE: 03-duplicate-renamed.pdf - INR 60,000
+   Upload this renamed copy of the first invoice.
+   Expected: Blocked. Duplicate invoice identifies the original execution.
+   Approval is unavailable, and the PO balance remains unchanged.
+
+3. EDGE CASE: 04-partial-invoice-overage.pdf - INR 45,000
+   Expected: Needs attention. Remaining PO balance is INR 40,000, so the
+   invoice exceeds it by INR 5,000. Approval is unavailable.
+   Request information or reject with an explanatory note. The accepted
+   PO balance must not increase.
+
+4. EDGE CASE: 02-missing-invoice-number.pdf - INR 10,000
+   Expected: Needs attention. Required information flags invoice_number.
+   Approval is unavailable. Add a note and select Request information.
+   Verify that the review is recorded on the invoice detail page.
+
+5. ADDITIONAL OCR DEMO: 06-scanned-invoice.pdf - INR 5,000
+   This PDF is an image without a text layer. Allow extra processing time.
+   Compare extracted fields and source evidence against the original PDF.
+   With unused sample history and sufficient PO balance, expect Ready for
+   approval if extraction is accurate; uncertainty should require review.
+
+REPEAT DEMOS
+These invoice identifiers are fixed. Re-uploading a previously processed,
+non-rejected invoice should be blocked as a duplicate. Use Run history to
+inspect earlier results instead of expecting a fresh happy path on every run.
+AI extraction can vary; inspect the actual validation messages.
+
+For the interview, show the first approval, then duplicate and PO overage.
+The missing-number sample provides a third business edge case.

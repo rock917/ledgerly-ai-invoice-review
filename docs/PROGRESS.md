@@ -1,4 +1,23 @@
-# Ledgerly progress - 3 November 2026
+# Ledgerly progress - 5 November 2026
+
+## Current release: edge-case samples and narrated walkthrough
+
+- Expanded the public guide with duplicate invoice, remaining-PO-balance overage, and missing invoice number scenarios. All five synthetic PDFs and instructions are available in one ZIP. Approve the valid sample first in a fresh workspace; existing history and balances are retained.
+- Rebuilt the embedded tutorial: approximately 2 minutes 48 seconds, English AI narration, 18 synchronized subtitle cues, updated poster and ten transcript steps. The video explicitly labels its staged sample results and demonstrates the three exceptions, approval gating, request information and the sample downloads.
+- Verified encoded frames, playback, audio decoding, captions, seeking, both themes and mobile layout. Frontend build, auth/sample browser checks, optional ERP browser checks, all 96 backend tests and actual migration SQL checks passed. Browser workflow tests use mocks; no new live financial decisions were made by these tests.
+- ERPNext remains local for interviews. Its optional frontend controls require `VITE_ENABLE_ERPNEXT=true`; the default public build makes no ERP requests. No new paid hosting is introduced. The public tutorial/sample release does not require an Azure backend redeploy.
+- GitHub/Vercel publication and public asset verification are the final release steps. Earlier entries below describe historical releases.
+
+## Latest: local ERPNext connector verified
+
+- Real workspace test passed: ERP PO `PUR-ORD-2026-00001` imported into the selected owner's Supabase workspace. A repeated import preserved its ID and balance. Synthetic invoice `ERP-LIVE-20261104-001` (INR 10,000) was stored privately, extracted through Groq, and passed the workflow checks. The user approved execution `bb8a1a69-ee1c-439c-a47a-3816d7b8fdc2` through live Ledgerly. The local connector then created and verified ERP draft `ACC-PINV-2026-00002`, saved its export status to Supabase, and returned the same draft on repeated export without changing the accepted PO balance. No ERP submission or payment was initiated. See `erpnext-workspace-check-results.json`.
+- Docker's disk was relocated to E: and the Linux engine recovered. Local ERPNext v16.53.0 now runs as the isolated `ledgerly-erpnext` project, bound to loopback port 18080.
+- Created synthetic company Ledgerly Demo, submitted PO `PUR-ORD-2026-00001`, and a restricted integration user. Permission checks confirm draft creation is allowed while invoice write/submit and payment create/submit are denied.
+- The real REST test created draft `ACC-PINV-2026-00001`. Simulated loss of the local acknowledgement reconciled the same document. Its totals, bill fields and PO line were verified, and an unapproved export was rejected. This test uses in-memory Ledgerly persistence, not live Supabase; see `erpnext-live-check-results.json`.
+- Implemented owner-scoped import/export endpoints, immutable imported mapping checks, approval gating, unique destination references, Supabase export leases, and UI error/retry/confirmation states.
+- Verification: 96 backend tests passed; actual migration SQL passed local PGlite ownership/lease/balance/privilege checks; mocked Chrome import/export/retry/mobile checks passed. TypeScript/Vite build passed. No public ERP success is claimed from mocks.
+- Migration 003 was applied by the owner and independently verified through Supabase. The selected private account was resolved without exposing credentials. Hosted HTTPS ERP, backend connection settings, and coordinated Azure/Vercel deployment remain outstanding. No existing live invoice history or PO balance was reset.
+- Current instructions: `ERP_NEXT_SETUP.md`. Older ERP-plan-only statements below describe the earlier releases.
 
 ## Latest: embedded tutorial video
 

@@ -13,4 +13,4 @@ export type Detail = Run & {
   reviews: { id: string; action: string; reviewer: string; comment: string; created_at: string }[];
 }
 export type DashboardData = { metrics: Record<string, number>; recent: Run[] }
-export type PO = { id: string; reference: string; currency: string; amount: number; accepted_amount: number; status: string; vendor: { name: string } }
+export type PO = { erp_snapshot?: Record<string, unknown> | null; id: string; reference: string; currency: string; amount: number; accepted_amount: number; status: string; vendor: { name: string } }

@@ -26,6 +26,7 @@ await page.route('**/health',r=>r.fulfill({json:{configured:true,status:'ok'}}))
 await page.route('**/api/**',async r=>{
  apiCalls++;assert.equal(r.request().headers().authorization,'Bearer '+jwt);
  const path=new URL(r.request().url()).pathname;let data;
+ assert(!path.includes('/erpnext'), 'Public build must not call the local-only ERP integration');
  if(path==='/api/me')data={id:user.id,display_name:'Alice Tester',email:user.email,daily_upload_limit:10};
  else if(path==='/api/dashboard')data={metrics:{total:0,approved:0,pending_reviews:0,failed:0},recent:[]};
  else if(path==='/api/executions' && r.request().method()==='POST'){uploads++;uploadBody=r.request().postDataBuffer();data={id:'ready'}}

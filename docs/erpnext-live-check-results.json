@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "mode": "real local ERPNext; Ledgerly persistence is an in-memory test adapter",
+  "purchase_order": "PUR-ORD-2026-00001",
+  "draft": "ACC-PINV-2026-00001",
+  "execution_id": "18ff35a6-a188-4122-b8b3-09586303a273",
+  "checks": [
+    "ERP supplier/item/company/PO reads",
+    "unique external reference configuration",
+    "approved invoice creates a draft",
+    "lost acknowledgement reconciles same draft",
+    "draft totals and PO line mapping verified",
+    "unapproved export rejected"
+  ],
+  "limitations": [
+    "Supabase migration and deployed Azure-to-ERP connection not tested by this script"
+  ]
+}

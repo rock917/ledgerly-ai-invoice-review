@@ -47,6 +47,17 @@ class Repository:
                     continue
                 raise ServiceError(f"Supabase could not be reached ({type(exc).__name__}). No successful persistence is assumed.", 503, "database_unavailable") from exc
         if response.is_error:
+            if '/rpc/ap_erp_' in path and response.status_code in (400, 409):
+                allowed = {
+                    'Private workspace required',
+                    'PO already exists with different data. Existing balances were preserved',
+                    'Vendor name already exists without this ERP mapping',
+                    'ERP vendor mapping changed; inspect it before importing',
+                    'Only an approved invoice in this workspace can be exported',
+                    'Export lease expired; refresh status before retrying',
+                }
+                detail = response.json().get('message', '')
+                raise ServiceError(detail if detail in allowed else 'ERP mapping could not be saved. Check the migration and existing records.', 409, 'erp_conflict')
             if "/rpc/ap_review_invoice" in path and response.status_code == 400:
                 detail = response.json().get("message", "Review could not be saved.")
                 raise ServiceError(detail, 409, "review_conflict")

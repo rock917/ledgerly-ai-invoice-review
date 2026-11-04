@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "execution_id": "bb8a1a69-ee1c-439c-a47a-3816d7b8fdc2",
+  "invoice_number": "ERP-LIVE-20261104-001",
+  "purchase_order": "PUR-ORD-2026-00001",
+  "draft": "ACC-PINV-2026-00002",
+  "mode": "Local connector with real ERPNext, Supabase and Groq; user approved through Ledgerly",
+  "checks": [
+    "PO import and repeated import",
+    "PDF storage and real Groq workflow",
+    "Human approval persisted",
+    "ERP draft created and verified",
+    "Repeated export returned same draft",
+    "Export did not change accepted PO balance"
+  ],
+  "limitations": [
+    "Public Azure-to-ERP hosting is not configured"
+  ]
+}

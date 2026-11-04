@@ -14,6 +14,7 @@ from fastapi import Depends, FastAPI, File, Header, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel, Field
 
 from app.auth import Identity, authenticate
 from app.core.config import get_settings
@@ -22,6 +23,7 @@ from app.database import Repository
 from app.schemas import ReviewRequest
 from app.services.ai import GroqExtractor
 from app.services.documents import extract_pages
+from app.services.erpnext import ERPNext
 from app.workflow import run_invoice
 
 
@@ -146,6 +148,36 @@ async def document(execution_id: UUID, repo: Repository = Depends(get_repo)):
 @app.get("/api/purchase-orders", dependencies=[Depends(authorize)])
 async def purchase_orders(repo: Repository = Depends(get_repo)):
     return await repo.rows("purchase_orders", {"select": "*,vendor:ap_vendors!ap_purchase_orders_vendor_id_fkey(name)", "order": "reference.asc"})
+
+
+class ERPImportRequest(BaseModel):
+    reference: str = Field(min_length=1, max_length=140, pattern=r"^[A-Za-z0-9_./-]+$")
+
+
+@app.get('/api/erpnext')
+async def erp_connection(repo: Repository = Depends(get_repo)):
+    erp = ERPNext(settings, app.state.http)
+    return {'enabled': erp.enabled(repo.owner_id), 'mode': 'draft_only'}
+
+
+@app.post('/api/erpnext/purchase-orders')
+async def erp_import(body: ERPImportRequest, repo: Repository = Depends(get_repo)):
+    return await ERPNext(settings, app.state.http).import_po(repo, body.reference)
+
+
+@app.get('/api/executions/{execution_id}/erpnext')
+async def erp_export_status(execution_id: UUID, repo: Repository = Depends(get_repo)):
+    await repo.detail(str(execution_id))
+    erp = ERPNext(settings, app.state.http)
+    if not erp.enabled(repo.owner_id):
+        return {'enabled': False}
+    rows = await repo.rows('erp_exports', {'execution_id': f'eq.{execution_id}', 'limit': '1'})
+    return {'enabled': True, 'export': erp.public_export(rows[0]) if rows else None}
+
+
+@app.post('/api/executions/{execution_id}/erpnext')
+async def erp_export(execution_id: UUID, repo: Repository = Depends(get_repo)):
+    return await ERPNext(settings, app.state.http).export(repo, str(execution_id))
 
 
 @app.post("/api/executions", status_code=202, dependencies=[Depends(authorize)])

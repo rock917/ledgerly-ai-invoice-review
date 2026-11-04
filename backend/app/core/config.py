@@ -20,6 +20,12 @@ class Settings(BaseSettings):
     max_daily_uploads: int = Field(default=10, ge=1, le=100)
     max_upload_mb: int = 5
     max_pdf_pages: int = 5
+    erpnext_url: str = ""
+    erpnext_api_key: str = ""
+    erpnext_api_secret: str = ""
+    erpnext_company: str = ""
+    # One explicitly connected workspace; never share ERP records across demo users.
+    erpnext_owner_id: str = ""
 
     @property
     def missing_configuration(self) -> list[str]:

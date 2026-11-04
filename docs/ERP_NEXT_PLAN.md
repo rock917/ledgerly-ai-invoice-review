@@ -1,6 +1,6 @@
 # ERPNext demo integration plan
 
-Status: plan only. The candidate has no ERP test account yet. No ERP resources, credentials, or connection have been created.
+Historical planning document. The connector is now implemented locally; follow [ERP_NEXT_SETUP.md](ERP_NEXT_SETUP.md) for current setup, limits, tests and rollout order. The original plan below is retained as design context and is not a deployment status report.
 
 ## What ERP integration means here
 
