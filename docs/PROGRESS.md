@@ -6,7 +6,7 @@
 - Rebuilt the embedded tutorial: approximately 2 minutes 48 seconds, English AI narration, 18 synchronized subtitle cues, updated poster and ten transcript steps. The video explicitly labels its staged sample results and demonstrates the three exceptions, approval gating, request information and the sample downloads.
 - Verified encoded frames, playback, audio decoding, captions, seeking, both themes and mobile layout. Frontend build, auth/sample browser checks, optional ERP browser checks, all 96 backend tests and actual migration SQL checks passed. Browser workflow tests use mocks; no new live financial decisions were made by these tests.
 - ERPNext remains local for interviews. Its optional frontend controls require `VITE_ENABLE_ERPNEXT=true`; the default public build makes no ERP requests. No new paid hosting is introduced. The public tutorial/sample release does not require an Azure backend redeploy.
-- GitHub/Vercel publication and public asset verification are the final release steps. Earlier entries below describe historical releases.
+- Release `32f1e3b` was pushed to GitHub and deployed by Vercel. Public MP4, captions (normalized line endings), poster and sample ZIP match the release files. Live Chrome checks passed for anonymous playback, decoded audio, 18 caption cues, all scene seeks, ten transcript steps, themes and mobile layout. Video byte ranges returned HTTP 206; the existing Azure API returned HTTP 200/configured true. The playback test now waits for actual playback/audio readiness rather than a fixed 700 ms local-network delay. Earlier entries below describe historical releases.
 
 ## Latest: local ERPNext connector verified
 

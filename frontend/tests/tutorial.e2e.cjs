@@ -24,7 +24,10 @@ const base = process.env.AUTH_TEST_URL || 'http://127.0.0.1:5176';
     assert(metadata.duration > 120 && metadata.duration < 240);
     assert.equal(metadata.width, 1280); assert.equal(metadata.height, 960);
     await video.evaluate(v => v.play());
-    await page.waitForTimeout(700);
+    await page.waitForFunction(() => {
+      const v = document.querySelector('video');
+      return v.currentTime > 0 && !v.paused && v.webkitAudioDecodedByteCount > 0;
+    }, undefined, { timeout: 30000 });
     assert(await video.evaluate(v => v.currentTime > 0 && !v.paused));
     assert(await video.evaluate(v => v.webkitAudioDecodedByteCount > 0), 'Narration audio must decode');
     await video.evaluate(v => { v.muted = true; });
