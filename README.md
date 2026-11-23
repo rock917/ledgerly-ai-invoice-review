@@ -6,8 +6,6 @@
 
 An AI-assisted accounts-payable workbench that turns invoice PDFs into traceable decisions—with human approval before a purchase-order balance changes.
 
-**Built for PS-1 · Zamp AI Solutions Analyst case study**
-
 [Live application](https://ledgerly-ai-invoice-review.vercel.app/) · [Watch the walkthrough](https://ledgerly-ai-invoice-review.vercel.app/assets/tutorial/ledgerly-walkthrough-narrated.mp4) · [API explorer](https://ledgerly-api-bobby-h3e4dnf4g3hsh9ej.centralindia-01.azurewebsites.net/docs) · [Download samples](https://ledgerly-ai-invoice-review.vercel.app/assets/samples/ledgerly-interview-samples.zip)
 
 ![React](https://img.shields.io/badge/React_19-TypeScript-61DAFB?style=flat-square&logo=react&logoColor=white)
